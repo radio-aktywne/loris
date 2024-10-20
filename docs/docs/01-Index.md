@@ -3,9 +3,9 @@ slug: /
 title: Index
 ---
 
-# emipass app
+# emipass
 
-WebRTC to SRT passthrough 💨
+Broadcast streaming passthrough 🎤
 
 ## 💡 About
 

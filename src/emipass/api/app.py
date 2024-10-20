@@ -54,12 +54,12 @@ class AppBuilder:
 
     def _build_openapi_config(self) -> OpenAPIConfig:
         return OpenAPIConfig(
-            # Title of the app
-            title="emipass app",
-            # Version of the app
+            # Title of the service
+            title="emipass",
+            # Version of the service
             version=metadata.version("emipass"),
-            # Description of the app
-            summary="WebRTC to SRT passthrough 💨",
+            # Description of the service
+            summary="Broadcast streaming passthrough 🎤",
             # Use handler docstrings as operation descriptions
             use_handler_docstrings=True,
             # Endpoint to serve the OpenAPI docs from

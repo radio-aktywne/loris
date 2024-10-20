@@ -68,9 +68,9 @@ gst-launch-1.0 \
 
 ## Ping
 
-You can check the status of the app by sending
+You can check the status of the service by sending
 either a `GET` or `HEAD` request to the `/ping` endpoint.
-The app should respond with a `204 No Content` status code.
+The service should respond with a `204 No Content` status code.
 
 For example, you can use `curl` to do that:
 

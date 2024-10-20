@@ -37,9 +37,9 @@ jobs:
           push: true
           # Slashes are here to make the string multiline and avoid using spaces
           tags: "\
-            ghcr.io/radio-aktywne/apps/emipass\
+            ghcr.io/radio-aktywne/services/emipass\
             :latest,\
-            ghcr.io/radio-aktywne/apps/emipass\
+            ghcr.io/radio-aktywne/services/emipass\
             :${{ github.event.release.tag_name }}"
           # Cache Docker layers between builds
           cache-from: type=gha,scope=${{ github.workflow }}
