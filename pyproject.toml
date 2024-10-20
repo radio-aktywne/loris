@@ -21,11 +21,11 @@ tzdata = "*"
 # Environment variables loader
 python-dotenv = "^1.0"
 # Streaming utilities
-pystreams = { git = "https://github.com/radio-aktywne/package-pystreams.git", tag = "0.9.0" }
+pystreams = { git = "https://github.com/radio-aktywne/pystreams.git", tag = "0.11.0" }
 # Locking utilities
-pylocks = { git = "https://github.com/radio-aktywne/package-pylocks.git", tag = "0.4.0" }
+pylocks = { git = "https://github.com/radio-aktywne/pylocks.git", tag = "0.5.0" }
 # Storage utilities
-pystores = { git = "https://github.com/radio-aktywne/package-pystores.git", tag = "0.5.0" }
+pystores = { git = "https://github.com/radio-aktywne/pystores.git", tag = "0.6.0" }
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3"

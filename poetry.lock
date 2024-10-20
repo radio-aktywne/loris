@@ -646,7 +646,7 @@ windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
 name = "pylocks"
-version = "0.4.0"
+version = "0.5.0"
 description = "Locking utilities for Python 🐍"
 optional = false
 python-versions = "^3.12"
@@ -655,13 +655,13 @@ develop = false
 
 [package.source]
 type = "git"
-url = "https://github.com/radio-aktywne/package-pylocks.git"
-reference = "0.4.0"
-resolved_reference = "e98e19944f07d740034399b2dcce268a43dee2fc"
+url = "https://github.com/radio-aktywne/pylocks.git"
+reference = "0.5.0"
+resolved_reference = "cf319ff2c5d76b3d5b14cc8ccc6c0df50b3401fb"
 
 [[package]]
 name = "pystores"
-version = "0.5.0"
+version = "0.6.0"
 description = "Storage utilities for Python 🐍"
 optional = false
 python-versions = "^3.12"
@@ -670,13 +670,13 @@ develop = false
 
 [package.source]
 type = "git"
-url = "https://github.com/radio-aktywne/package-pystores.git"
-reference = "0.5.0"
-resolved_reference = "85e9c7ecb75b6031fb30fee1b172ae4f6090df9f"
+url = "https://github.com/radio-aktywne/pystores.git"
+reference = "0.6.0"
+resolved_reference = "2dfa00d860e45918a62d9cfcee252651550160b0"
 
 [[package]]
 name = "pystreams"
-version = "0.9.0"
+version = "0.11.0"
 description = "Streaming utilities for Python 🐍"
 optional = false
 python-versions = "^3.12"
@@ -685,9 +685,9 @@ develop = false
 
 [package.source]
 type = "git"
-url = "https://github.com/radio-aktywne/package-pystreams.git"
-reference = "0.9.0"
-resolved_reference = "cae2e14f85b4de6890526747bf0f53e7dd2d4553"
+url = "https://github.com/radio-aktywne/pystreams.git"
+reference = "0.11.0"
+resolved_reference = "567c6f072302939b16ab72230d0236a91e500685"
 
 [[package]]
 name = "pytest"
@@ -1179,4 +1179,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "eed56ad9e9dc8f267d58a37dc16112fad2a539f787a1b2a8291f5cd0ece7087f"
+content-hash = "e7e29c448cfe174f495c75616f522c45f5e080a2d2148d61484e8d8111585e3a"
