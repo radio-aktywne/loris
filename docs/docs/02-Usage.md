@@ -17,7 +17,7 @@ curl \
     --request POST \
     --header "Content-Type: application/json" \
     --data '{"srt": {"host": "example.com", "port": 12345}}' \
-    http://localhost:11000/stream
+    http://localhost:10400/stream
 ```
 
 You should receive a response containing the port number and STUN server
@@ -39,7 +39,7 @@ package:
 ```js
 import { WHIPClient } from "@eyevinn/whip-web-client";
 
-const endpoint = "http://localhost:11001/whip/endpoint";
+const endpoint = "http://localhost:10401/whip/endpoint";
 const client = new WHIPClient({ endpoint });
 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
@@ -63,7 +63,7 @@ gst-launch-1.0 \
     queue \
     ! \
     whipclientsink \
-    signaller::whip-endpoint="http://localhost:11001/whip/endpoint"
+    signaller::whip-endpoint="http://localhost:10401/whip/endpoint"
 ```
 
 ## Ping
@@ -78,5 +78,5 @@ For example, you can use `curl` to do that:
 curl \
     --request HEAD \
     --head \
-    http://localhost:11000/ping
+    http://localhost:10400/ping
 ```

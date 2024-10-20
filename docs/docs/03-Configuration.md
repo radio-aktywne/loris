@@ -12,16 +12,16 @@ You can configure the service at runtime using various environment variables:
   (default: `0.0.0.0`)
 - `LORIS__SERVER__PORTS__HTTP` -
   port to listen for HTTP requests on
-  (default: `11000`)
+  (default: `10400`)
 - `LORIS__SERVER__PORTS__WHIP` -
   ports to select from when listening for WHIP requests
-  (default: `11001`)
+  (default: `10401`)
 - `LORIS__SERVER__PORTS__RTP__MIN` -
   minimum port to select from when listening for RTP connections
-  (default: `11002`)
+  (default: `10402`)
 - `LORIS__SERVER__PORTS__RTP__MAX` -
   maximum port to select from when listening for RTP connections
-  (default: `11002`)
+  (default: `10402`)
 - `LORIS__SERVER__TRUSTED` -
   trusted IP addresses
   (default: `*`)

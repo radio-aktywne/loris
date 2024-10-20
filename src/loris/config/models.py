@@ -9,10 +9,10 @@ from loris.config.base import BaseConfig
 class ServerRTPPortsConfig(BaseModel):
     """Configuration for the server RTP ports."""
 
-    min: int = Field(11002, ge=1, le=65535)
+    min: int = Field(10402, ge=1, le=65535)
     """Minimum port to select from when listening for RTP connections."""
 
-    max: int = Field(11002, ge=1, le=65535)
+    max: int = Field(10402, ge=1, le=65535)
     """Maximum port to select from when listening for RTP connections."""
 
     @model_validator(mode="after")
@@ -27,10 +27,10 @@ class ServerRTPPortsConfig(BaseModel):
 class ServerPortsConfig(BaseModel):
     """Configuration for the server ports."""
 
-    http: int = Field(11000, ge=0, le=65535)
+    http: int = Field(10400, ge=0, le=65535)
     """Port to listen for HTTP requests on."""
 
-    whip: set[Annotated[int, Field(..., ge=1, le=65535)]] = Field({11001}, min_length=1)
+    whip: set[Annotated[int, Field(..., ge=1, le=65535)]] = Field({10401}, min_length=1)
     """Ports to select from when listening for WHIP requests."""
 
     rtp: ServerRTPPortsConfig = ServerRTPPortsConfig()

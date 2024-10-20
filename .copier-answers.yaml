@@ -10,7 +10,7 @@ envprefix: LORIS
 events: false
 imagename: services/loris
 importname: loris
-port: 11000
+port: 10400
 registry: true
 releases: true
 reponame: loris
