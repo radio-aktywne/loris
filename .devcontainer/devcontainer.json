@@ -1,6 +1,6 @@
 {
   // Use latest pre-built image
-  "image": "ghcr.io/radio-aktywne/devcontainers/app-litestar:latest",
+  "image": "ghcr.io/radio-aktywne/devcontainers/service-litestar:latest",
   // Run arguments
   "runArgs": [
     // Use host UTS namespace

@@ -210,7 +210,7 @@ tasks:
         pytest
         {{ .CLI_ARGS }}
   run:
-    desc: Run the app
+    desc: Run the service
     interactive: true
     cmds:
       - task: install-internal
