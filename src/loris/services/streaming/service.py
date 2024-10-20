@@ -4,10 +4,10 @@ from pylocks.base import Lock
 from pystores.base import Store
 from pystreams.stream import Stream
 
-from emipass.config.models import Config
-from emipass.services.streaming import errors as e
-from emipass.services.streaming import models as m
-from emipass.services.streaming.runner import Runner
+from loris.config.models import Config
+from loris.services.streaming import errors as e
+from loris.services.streaming import models as m
+from loris.services.streaming.runner import Runner
 
 
 class StreamingService:

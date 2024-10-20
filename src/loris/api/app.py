@@ -10,10 +10,10 @@ from litestar.plugins import PluginProtocol
 from pylocks.asyncio import AsyncioLock
 from pystores.memory import MemoryStore
 
-from emipass.api.routes.router import router
-from emipass.config.models import Config
-from emipass.services.streaming.service import StreamingService
-from emipass.state import State
+from loris.api.routes.router import router
+from loris.config.models import Config
+from loris.services.streaming.service import StreamingService
+from loris.state import State
 
 
 class AppBuilder:
@@ -55,9 +55,9 @@ class AppBuilder:
     def _build_openapi_config(self) -> OpenAPIConfig:
         return OpenAPIConfig(
             # Title of the service
-            title="emipass",
+            title="loris",
             # Version of the service
-            version=metadata.version("emipass"),
+            version=metadata.version("loris"),
             # Description of the service
             summary="Broadcast streaming passthrough 🎤",
             # Use handler docstrings as operation descriptions

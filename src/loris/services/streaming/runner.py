@@ -4,8 +4,8 @@ from pystreams.gstreamer import GStreamerNode, GStreamerStreamMetadata
 from pystreams.process import ProcessBasedStreamFactory, ProcessBasedStreamMetadata
 from pystreams.stream import Stream
 
-from emipass.config.models import Config
-from emipass.services.streaming import models as m
+from loris.config.models import Config
+from loris.services.streaming import models as m
 
 
 class Runner:

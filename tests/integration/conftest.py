@@ -5,9 +5,9 @@ import pytest_asyncio
 from litestar import Litestar
 from litestar.testing import AsyncTestClient
 
-from emipass.api.app import AppBuilder
-from emipass.config.builder import ConfigBuilder
-from emipass.config.models import Config
+from loris.api.app import AppBuilder
+from loris.config.builder import ConfigBuilder
+from loris.config.models import Config
 
 
 @pytest.fixture(scope="session")

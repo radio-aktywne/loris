@@ -1,7 +1,7 @@
 import uvicorn
 from litestar import Litestar
 
-from emipass.config.models import ServerConfig
+from loris.config.models import ServerConfig
 
 
 class Server:

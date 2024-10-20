@@ -1,4 +1,4 @@
-from emipass.services.ping import models as m
+from loris.services.ping import models as m
 
 
 class PingService:

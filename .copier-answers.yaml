@@ -4,15 +4,15 @@ _src_path: gh:radio-aktywne/template-service-litestar
 accountname: radio-aktywne
 description: Broadcast streaming passthrough 🎤
 docs: true
-docsurl: https://radio-aktywne.github.io/emipass
+docsurl: https://radio-aktywne.github.io/loris
 email: it@radioaktywne.pl
-envprefix: EMIPASS
+envprefix: LORIS
 events: false
-imagename: services/emipass
-importname: emipass
+imagename: services/loris
+importname: loris
 port: 11000
 registry: true
 releases: true
-reponame: emipass
-repourl: https://github.com/radio-aktywne/emipass
-servicename: emipass
+reponame: loris
+repourl: https://github.com/radio-aktywne/loris
+servicename: loris

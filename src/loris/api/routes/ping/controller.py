@@ -5,9 +5,9 @@ from litestar.di import Provide
 from litestar.response import Response
 from litestar.status_codes import HTTP_204_NO_CONTENT
 
-from emipass.api.routes.ping import models as m
-from emipass.api.routes.ping.service import Service
-from emipass.services.ping.service import PingService
+from loris.api.routes.ping import models as m
+from loris.api.routes.ping.service import Service
+from loris.services.ping.service import PingService
 
 
 class DependenciesBuilder:

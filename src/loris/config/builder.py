@@ -1,7 +1,7 @@
 from pydantic import ValidationError
 
-from emipass.config.errors import ConfigError
-from emipass.config.models import Config
+from loris.config.errors import ConfigError
+from loris.config.models import Config
 
 
 class ConfigBuilder:

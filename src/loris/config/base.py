@@ -8,7 +8,7 @@ class BaseConfig(BaseSettings):
         # Treat environment variables names as case-insensitive
         case_sensitive=False,
         # Use this prefix for all environment variables
-        env_prefix="EMIPASS__",
+        env_prefix="LORIS__",
         # Load environment variables from this file if it exists
         env_file=".env",
         # Don't ignore empty environment variables

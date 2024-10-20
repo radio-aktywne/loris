@@ -1,11 +1,11 @@
 import typer
 
-from emipass.api.app import AppBuilder
-from emipass.cli import CliBuilder
-from emipass.config.builder import ConfigBuilder
-from emipass.config.errors import ConfigError
-from emipass.console import FallbackConsoleBuilder
-from emipass.server import Server
+from loris.api.app import AppBuilder
+from loris.cli import CliBuilder
+from loris.config.builder import ConfigBuilder
+from loris.config.errors import ConfigError
+from loris.console import FallbackConsoleBuilder
+from loris.server import Server
 
 cli = CliBuilder().build()
 

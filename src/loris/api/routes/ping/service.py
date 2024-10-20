@@ -1,11 +1,11 @@
 from collections.abc import Generator
 from contextlib import contextmanager
 
-from emipass.api.routes.ping import errors as e
-from emipass.api.routes.ping import models as m
-from emipass.services.ping import errors as pe
-from emipass.services.ping import models as pm
-from emipass.services.ping.service import PingService
+from loris.api.routes.ping import errors as e
+from loris.api.routes.ping import models as m
+from loris.services.ping import errors as pe
+from loris.services.ping import models as pm
+from loris.services.ping.service import PingService
 
 
 class Service:

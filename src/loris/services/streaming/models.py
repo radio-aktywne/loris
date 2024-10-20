@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from emipass.models.base import datamodel
+from loris.models.base import datamodel
 
 
 class Codec(StrEnum):
