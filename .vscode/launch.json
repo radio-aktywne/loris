@@ -2,15 +2,15 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "emipass",
+      "name": "loris",
       "type": "debugpy",
       "request": "launch",
-      "module": "emipass",
+      "module": "loris",
       "justMyCode": false,
       "env": {
         "PATH": "${workspaceFolder}/.venv/bin:${env:PATH}",
         "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.12/site-packages:${env:EXTRAPYTHONPATH}",
-        "EMIPASS__DEBUG": "true"
+        "LORIS__DEBUG": "true"
       }
     }
   ]

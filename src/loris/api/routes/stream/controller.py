@@ -6,12 +6,12 @@ from litestar.di import Provide
 from litestar.params import Body
 from litestar.response import Response
 
-from emipass.api.exceptions import ConflictException
-from emipass.api.routes.stream import errors as e
-from emipass.api.routes.stream import models as m
-from emipass.api.routes.stream.service import Service
-from emipass.api.validator import Validator
-from emipass.state import State
+from loris.api.exceptions import ConflictException
+from loris.api.routes.stream import errors as e
+from loris.api.routes.stream import models as m
+from loris.api.routes.stream.service import Service
+from loris.api.validator import Validator
+from loris.state import State
 
 
 class DependenciesBuilder:

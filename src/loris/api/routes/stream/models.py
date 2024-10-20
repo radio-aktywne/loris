@@ -1,7 +1,7 @@
 from pydantic import Field
 
-from emipass.models.base import SerializableModel, datamodel, serializable
-from emipass.services.streaming import models as sm
+from loris.models.base import SerializableModel, datamodel, serializable
+from loris.services.streaming import models as sm
 
 
 @serializable

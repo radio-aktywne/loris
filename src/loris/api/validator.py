@@ -5,7 +5,7 @@ from typing import Any
 
 from pydantic import RootModel, ValidationError
 
-from emipass.api.exceptions import BadRequestException
+from loris.api.exceptions import BadRequestException
 
 
 class Validator[T]:

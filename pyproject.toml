@@ -1,6 +1,6 @@
 [tool.poetry]
 package-mode = true
-name = "emipass"
+name = "loris"
 version = "0.8.0"
 description = "Broadcast streaming passthrough 🎤"
 authors = ["radio-aktywne <it@radioaktywne.pl>"]
@@ -34,7 +34,7 @@ pytest-asyncio = "^0.23"
 
 [tool.poetry.scripts]
 # Register CLI
-emipass = "emipass.__main__:cli"
+loris = "loris.__main__:cli"
 
 # See: https://python-poetry.org/docs/pyproject/#poetry-and-pep-517
 [build-system]

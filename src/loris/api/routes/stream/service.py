@@ -1,11 +1,11 @@
 from collections.abc import Generator
 from contextlib import contextmanager
 
-from emipass.api.routes.stream import errors as e
-from emipass.api.routes.stream import models as m
-from emipass.services.streaming import errors as se
-from emipass.services.streaming import models as sm
-from emipass.services.streaming.service import StreamingService
+from loris.api.routes.stream import errors as e
+from loris.api.routes.stream import models as m
+from loris.services.streaming import errors as se
+from loris.services.streaming import models as sm
+from loris.services.streaming.service import StreamingService
 
 
 class Service:

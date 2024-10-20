@@ -3,7 +3,7 @@ from typing import Annotated, Any, Self
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from emipass.config.base import BaseConfig
+from loris.config.base import BaseConfig
 
 
 class ServerRTPPortsConfig(BaseModel):

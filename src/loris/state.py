@@ -1,7 +1,7 @@
 from litestar.datastructures import State as LitestarState
 
-from emipass.config.models import Config
-from emipass.services.streaming.service import StreamingService
+from loris.config.models import Config
+from loris.services.streaming.service import StreamingService
 
 
 class State(LitestarState):

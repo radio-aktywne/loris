@@ -223,7 +223,7 @@ tasks:
         .env.python
         run
         --
-        emipass
+        loris
         {{ .CLI_ARGS }}
   docker:
     desc: Run in docker container

@@ -1,6 +1,6 @@
 from litestar import Router
 
-from emipass.api.routes.ping.controller import Controller
+from loris.api.routes.ping.controller import Controller
 
 router = Router(
     path="/ping",
