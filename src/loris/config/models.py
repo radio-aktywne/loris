@@ -89,5 +89,5 @@ class Config(BaseConfig):
     streamer: StreamerConfig = StreamerConfig()
     """Configuration for the streamer."""
 
-    debug: bool = False
+    debug: bool = True
     """Enable debug mode."""

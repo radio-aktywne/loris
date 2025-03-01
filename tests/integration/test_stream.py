@@ -3,7 +3,7 @@ from litestar.status_codes import HTTP_201_CREATED
 from litestar.testing import AsyncTestClient
 
 
-@pytest.mark.asyncio(scope="session")
+@pytest.mark.asyncio(loop_scope="session")
 async def test_post(client: AsyncTestClient) -> None:
     """Test if POST /stream returns correct response."""
 
