@@ -13,5 +13,5 @@ services:
       - "LORIS__STREAMER__STUN__HOST=${LORIS__STREAMER__STUN__HOST:-stun.l.google.com}"
       - "LORIS__STREAMER__STUN__PORT=${LORIS__STREAMER__STUN__PORT:-19302}"
       - "LORIS__STREAMER__TIMEOUT=${LORIS__STREAMER__TIMEOUT:-PT1M}"
-      - "LORIS__DEBUG=${LORIS__DEBUG:-false}"
+      - "LORIS__DEBUG=${LORIS__DEBUG:-true}"
     network_mode: host
