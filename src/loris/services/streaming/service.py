@@ -38,6 +38,19 @@ class StreamingService:
 
         return port
 
+    async def _wait_for_stream_start(self, port: int) -> None:
+        host = self._config.server.host
+
+        while True:
+            try:
+                _, writer = await asyncio.open_connection(host, port)
+                writer.close()
+                await writer.wait_closed()
+            except ConnectionError:
+                pass
+            else:
+                break
+
     async def _free_port(self, port: int) -> None:
         async with self._lock:
             used = await self._store.get()
@@ -67,6 +80,7 @@ class StreamingService:
             stun=stun,
         )
 
+        await asyncio.wait_for(self._wait_for_stream_start(port), 5)
         asyncio.create_task(self._watch_stream(stream, port))
 
     async def stream(self, request: m.StreamRequest) -> m.StreamResponse:
