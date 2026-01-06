@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from loris.models.base import SerializableModel, datamodel, serializable
@@ -7,20 +9,28 @@ from loris.services.streaming import models as sm
 @serializable
 @datamodel
 class SRTServer(sm.SRTServer):
+    """SRT server configuration."""
+
     password: str | None = None
+    """Password to authenticate with the SRT server."""
 
     def map(self) -> sm.SRTServer:
+        """Map to external representation."""
         return sm.SRTServer(**vars(self))
 
 
 @serializable
 @datamodel
 class STUNServer(sm.STUNServer):
+    """STUN server configuration."""
+
     @staticmethod
     def rmap(stun: sm.STUNServer) -> "STUNServer":
+        """Map to internal representation."""
         return STUNServer(**vars(stun))
 
     def map(self) -> sm.STUNServer:
+        """Map to external representation."""
         return sm.STUNServer(**vars(self))
 
 
@@ -46,7 +56,7 @@ class StreamResponseData(SerializableModel):
     stun: STUNServer
     """STUN server configuration."""
 
-    port: int = Field(..., ge=1, le=65535)
+    port: Annotated[int, Field(ge=1, le=65535)]
     """Port to stream to."""
 
 

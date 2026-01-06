@@ -2,7 +2,7 @@
 
 <div align="center">
 
-Broadcast streaming passthrough 🎤
+Broadcast streaming passthrough service 🎤
 
 [![Lint](https://github.com/radio-aktywne/loris/actions/workflows/lint.yaml/badge.svg)](https://github.com/radio-aktywne/loris/actions/workflows/lint.yaml)
 [![Test](https://github.com/radio-aktywne/loris/actions/workflows/test.yaml/badge.svg)](https://github.com/radio-aktywne/loris/actions/workflows/test.yaml)
@@ -16,7 +16,8 @@ Broadcast streaming passthrough 🎤
 
 ## 💡 About
 
-`loris` is a service that allows you to convert WebRTC stream to SRT stream.
+`loris` is a [`Litestar`](https://litestar.dev) service
+that allows you to convert WebRTC stream to SRT stream.
 
 ## 📄 Further Reading
 

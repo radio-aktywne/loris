@@ -1,3 +1,5 @@
+from typing import Any
+
 import gi
 
 gi.require_version("GObject", "2.0")
@@ -8,6 +10,8 @@ from gi.repository import GObject, Gst, GstWebRTC  # noqa: E402
 
 
 class CustomWhipServerSrc(Gst.Bin):
+    """Custom WHIP Server Source Element."""
+
     __gstmetadata__ = (
         "CustomWhipServerSrc",
         "Source/Network/WebRTC",
@@ -22,7 +26,7 @@ class CustomWhipServerSrc(Gst.Bin):
     _webrtcbin: Gst.Element | None
     _agent: GstWebRTC.WebRTCICE | None
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
         self._min = None
@@ -63,6 +67,7 @@ class CustomWhipServerSrc(Gst.Bin):
         blurb="Address to listen on",
     )
     def address(self) -> str | None:
+        """Address to listen on."""
         return self._signaller.get_property("host-addr")
 
     @address.setter
@@ -75,6 +80,7 @@ class CustomWhipServerSrc(Gst.Bin):
         blurb="STUN server to use",
     )
     def stun(self) -> str | None:
+        """STUN server to use."""
         return self._whip.get_property("stun-server")
 
     @stun.setter
@@ -89,6 +95,7 @@ class CustomWhipServerSrc(Gst.Bin):
         maximum=65535,
     )
     def min(self) -> int:
+        """Minimum RTP port for the ICE agent."""
         if self._agent is not None:
             self._min = self._agent.get_property("min-rtp-port")
 
@@ -110,6 +117,7 @@ class CustomWhipServerSrc(Gst.Bin):
         maximum=65535,
     )
     def max(self) -> int:
+        """Maximum RTP port for the ICE agent."""
         if self._agent is not None:
             self._max = self._agent.get_property("max-rtp-port")
 
@@ -129,6 +137,7 @@ class CustomWhipServerSrc(Gst.Bin):
         blurb="Codec to use",
     )
     def codec(self) -> str:
+        """Codec to use."""
         codecs = self._whip.get_property("audio-codecs")
         return codecs[0]
 
@@ -137,19 +146,17 @@ class CustomWhipServerSrc(Gst.Bin):
         self._whip.set_property("audio-codecs", Gst.ValueArray([value]))
 
     def _on_pad_added(
-        self, element: Gst.Element, pad: Gst.Pad, *args, **kwargs
+        self, element: Gst.Element, pad: Gst.Pad, *args: Any, **kwargs: Any
     ) -> None:
         """Handle the pad-added signal from the whipserversrc element."""
-
         name = pad.get_name()
         ghost_pad = Gst.GhostPad.new(name, pad)
         self.add_pad(ghost_pad)
 
     def _on_pad_removed(
-        self, element: Gst.Element, pad: Gst.Pad, *args, **kwargs
+        self, element: Gst.Element, pad: Gst.Pad, *args: Any, **kwargs: Any
     ) -> None:
         """Handle the pad-removed signal from the whipserversrc element."""
-
         name = pad.get_name()
         ghost_pad = self.get_static_pad(name)
         self.remove_pad(ghost_pad)
@@ -159,11 +166,10 @@ class CustomWhipServerSrc(Gst.Bin):
         signaller: Gst.Object,
         peer_id: str,
         webrtcbin: Gst.Element,
-        *args,
-        **kwargs,
+        *args: Any,
+        **kwargs: Any,
     ) -> None:
         """Handle the webrtcbin-ready signal from the signaller."""
-
         self._webrtcbin = webrtcbin
         self._agent = self._webrtcbin.get_property("ice-agent")
 

@@ -6,7 +6,6 @@ from litestar.testing import AsyncTestClient
 @pytest.mark.asyncio(loop_scope="session")
 async def test_post(client: AsyncTestClient) -> None:
     """Test if POST /stream returns correct response."""
-
     request = {
         "srt": {
             "host": "example.com",

@@ -1,17 +1,14 @@
 {
-  "version": "0.2.0",
   "configurations": [
     {
-      "name": "loris",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "loris",
       "justMyCode": false,
-      "env": {
-        "PATH": "${workspaceFolder}/.venv/bin:${env:PATH}",
-        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.12/site-packages:${env:EXTRAPYTHONPATH}",
-        "LORIS__DEBUG": "true"
-      }
+      "module": "loris",
+      "name": "loris",
+      "python": "uv",
+      "pythonArgs": ["run", "python"],
+      "request": "launch",
+      "type": "debugpy"
     }
-  ]
+  ],
+  "version": "0.2.0"
 }
