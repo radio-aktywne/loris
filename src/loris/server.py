@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 import uvicorn
 from litestar import Litestar
 
@@ -10,6 +12,7 @@ class Server:
     Args:
         app: The application.
         config: The configuration for the server.
+
     """
 
     def __init__(self, app: Litestar, config: ServerConfig) -> None:
@@ -18,10 +21,11 @@ class Server:
 
     def run(self) -> None:
         """Run the server."""
-
         uvicorn.run(
             self._app,
             host=self._config.host,
             port=self._config.ports.http,
-            forwarded_allow_ips=self._config.trusted,
+            forwarded_allow_ips=list(self._config.trusted)
+            if isinstance(self._config.trusted, Sequence)
+            else self._config.trusted,
         )

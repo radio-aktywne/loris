@@ -1,8 +1,8 @@
 from socket import gethostbyname
 
+from pystreams.base import Stream
 from pystreams.gstreamer import GStreamerNode, GStreamerStreamMetadata
 from pystreams.process import ProcessBasedStreamFactory, ProcessBasedStreamMetadata
-from pystreams.stream import Stream
 
 from loris.config.models import Config
 from loris.services.streaming import models as m
@@ -54,8 +54,8 @@ class Runner:
                     element="opusparse",
                 )
 
-    def _build_muxer_node(self, format: m.Format) -> GStreamerNode:
-        match format:
+    def _build_muxer_node(self, fmt: m.Format) -> GStreamerNode:
+        match fmt:
             case m.Format.OGG:
                 return GStreamerNode(
                     element="oggmux",
@@ -76,7 +76,7 @@ class Runner:
         self,
         port: int,
         codec: m.Codec,
-        format: m.Format,
+        fmt: m.Format,
         srt: m.SRTServer,
         stun: m.STUNServer,
     ) -> GStreamerStreamMetadata:
@@ -86,7 +86,7 @@ class Runner:
                 self._build_watchdog_node(),
                 self._build_extractor_node(codec),
                 self._build_parser_node(codec),
-                self._build_muxer_node(format),
+                self._build_muxer_node(fmt),
                 self._build_output_node(srt),
             ],
         )
@@ -98,11 +98,10 @@ class Runner:
         self,
         port: int,
         codec: m.Codec,
-        format: m.Format,
+        fmt: m.Format,
         srt: m.SRTServer,
         stun: m.STUNServer,
     ) -> Stream:
         """Run the stream."""
-
-        metadata = self._build_stream_metadata(port, codec, format, srt, stun)
+        metadata = self._build_stream_metadata(port, codec, fmt, srt, stun)
         return await self._run_stream(metadata)

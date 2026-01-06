@@ -1,13 +1,11 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: 0.18.0
+_commit: 0.19.0
 _src_path: gh:radio-aktywne/template-service-litestar
 accountname: radio-aktywne
-description: Broadcast streaming passthrough 🎤
+description: Broadcast streaming passthrough service 🎤
 docs: true
 docsurl: https://radio-aktywne.github.io/loris
-email: it@radioaktywne.pl
 envprefix: LORIS
-events: false
 imagename: services/loris
 importname: loris
 port: 10400

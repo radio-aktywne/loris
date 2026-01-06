@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+from collections.abc import Set as AbstractSet
 from datetime import timedelta
 from typing import Annotated, Any, Self
 
@@ -9,14 +11,15 @@ from loris.config.base import BaseConfig
 class ServerRTPPortsConfig(BaseModel):
     """Configuration for the server RTP ports."""
 
-    min: int = Field(10402, ge=1, le=65535)
-    """Minimum port to select from when listening for RTP connections."""
-
-    max: int = Field(10402, ge=1, le=65535)
+    max: int = Field(default=10402, ge=1, le=65535)
     """Maximum port to select from when listening for RTP connections."""
+
+    min: int = Field(default=10402, ge=1, le=65535)
+    """Minimum port to select from when listening for RTP connections."""
 
     @model_validator(mode="after")
     def validate_ports(self) -> Self:
+        """Validate ports."""
         if self.min > self.max:
             message = "Minimum port cannot be greater than maximum port."
             raise ValueError(message)
@@ -27,18 +30,21 @@ class ServerRTPPortsConfig(BaseModel):
 class ServerPortsConfig(BaseModel):
     """Configuration for the server ports."""
 
-    http: int = Field(10400, ge=0, le=65535)
+    http: int = Field(default=10400, ge=0, le=65535)
     """Port to listen for HTTP requests on."""
-
-    whip: set[Annotated[int, Field(..., ge=1, le=65535)]] = Field({10401}, min_length=1)
-    """Ports to select from when listening for WHIP requests."""
 
     rtp: ServerRTPPortsConfig = ServerRTPPortsConfig()
     """Configuration for the server RTP ports."""
 
+    whip: AbstractSet[Annotated[int, Field(ge=1, le=65535)]] = Field(
+        default={10401}, min_length=1
+    )
+    """Ports to select from when listening for WHIP requests."""
+
     @field_validator("whip", mode="before")
     @classmethod
     def validate_whip(cls, v: Any) -> Any:
+        """Validate WHIP ports."""
         if isinstance(v, int):
             v = {v}
         elif isinstance(v, str):
@@ -56,7 +62,7 @@ class ServerConfig(BaseModel):
     ports: ServerPortsConfig = ServerPortsConfig()
     """Configuration for the server ports."""
 
-    trusted: str | list[str] | None = "*"
+    trusted: str | Sequence[str] | None = "*"
     """Trusted IP addresses."""
 
 
@@ -66,7 +72,7 @@ class STUNConfig(BaseModel):
     host: str = "stun.l.google.com"
     """Host of the STUN server."""
 
-    port: int = Field(19302, ge=0, le=65535)
+    port: int = Field(default=19302, ge=0, le=65535)
     """Port of the STUN server."""
 
 
@@ -76,18 +82,18 @@ class StreamerConfig(BaseModel):
     stun: STUNConfig = STUNConfig()
     """Configuration for the STUN server."""
 
-    timeout: timedelta = Field(timedelta(minutes=1), ge=0)
+    timeout: timedelta = Field(default=timedelta(minutes=1), ge=0)
     """Time after which a stream will be stopped if no connections are made."""
 
 
 class Config(BaseConfig):
     """Configuration for the service."""
 
+    debug: bool = True
+    """Enable debug mode."""
+
     server: ServerConfig = ServerConfig()
     """Configuration for the server."""
 
     streamer: StreamerConfig = StreamerConfig()
     """Configuration for the streamer."""
-
-    debug: bool = True
-    """Enable debug mode."""

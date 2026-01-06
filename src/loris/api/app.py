@@ -1,10 +1,13 @@
 import logging
-from collections.abc import AsyncGenerator, Callable
+from collections.abc import AsyncGenerator, Callable, Sequence
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from importlib import metadata
 
 from litestar import Litestar, Router
+from litestar.channels import ChannelsPlugin
+from litestar.channels.backends.memory import MemoryChannelsBackend
 from litestar.openapi import OpenAPIConfig
+from litestar.openapi.plugins import ScalarRenderPlugin
 from litestar.plugins import PluginProtocol
 from litestar.plugins.pydantic import PydanticPlugin
 from pylocks.asyncio import AsyncioLock
@@ -21,12 +24,13 @@ class AppBuilder:
 
     Args:
         config: Config object.
+
     """
 
     def __init__(self, config: Config) -> None:
         self._config = config
 
-    def _get_route_handlers(self) -> list[Router]:
+    def _get_route_handlers(self) -> Sequence[Router]:
         return [router]
 
     def _get_debug(self) -> bool:
@@ -47,23 +51,36 @@ class AppBuilder:
 
     def _build_lifespan(
         self,
-    ) -> list[Callable[[Litestar], AbstractAsyncContextManager]]:
+    ) -> Sequence[Callable[[Litestar], AbstractAsyncContextManager]]:
         return [
             self._suppress_httpx_logging_lifespan,
         ]
 
     def _build_openapi_config(self) -> OpenAPIConfig:
         return OpenAPIConfig(
-            # Title of the service
             title="loris",
-            # Version of the service
             version=metadata.version("loris"),
-            # Description of the service
-            summary="Broadcast streaming passthrough 🎤",
-            # Use handler docstrings as operation descriptions
+            description="Broadcast streaming passthrough service 🎤",
             use_handler_docstrings=True,
-            # Endpoint to serve the OpenAPI docs from
-            path="/schema",
+            path="/openapi",
+            render_plugins=[
+                ScalarRenderPlugin(
+                    path="/openapi",
+                    options={
+                        "hideClientButton": True,
+                    },
+                ),
+            ],
+        )
+
+    def _build_channels_plugin(self) -> ChannelsPlugin:
+        return ChannelsPlugin(
+            # Store events in memory (good only for single instance services)
+            backend=MemoryChannelsBackend(),
+            # Channels to handle
+            channels=["events"],
+            # Don't allow channels outside of the list above
+            arbitrary_channels_allowed=False,
         )
 
     def _build_pydantic_plugin(self) -> PydanticPlugin:
@@ -74,8 +91,9 @@ class AppBuilder:
             validate_strict=False,
         )
 
-    def _build_plugins(self) -> list[PluginProtocol]:
+    def _build_plugins(self) -> Sequence[PluginProtocol]:
         return [
+            self._build_channels_plugin(),
             self._build_pydantic_plugin(),
         ]
 
@@ -98,6 +116,7 @@ class AppBuilder:
         )
 
     def build(self) -> Litestar:
+        """Build the app."""
         return Litestar(
             route_handlers=self._get_route_handlers(),
             debug=self._get_debug(),

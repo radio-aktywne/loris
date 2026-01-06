@@ -25,15 +25,14 @@ class Service:
 
     async def stream(self, request: m.StreamRequest) -> m.StreamResponse:
         """Start a stream."""
-
         codec = request.data.codec
-        format = request.data.format
+        fmt = request.data.format
         srt = request.data.srt
         stun = request.data.stun
 
         req = sm.StreamRequest(
             codec=codec,
-            format=format,
+            format=fmt,
             srt=srt.map(),
             stun=stun.map() if stun else None,
         )

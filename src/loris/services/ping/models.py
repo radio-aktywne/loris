@@ -5,11 +5,7 @@ from loris.models.base import datamodel
 class PingRequest:
     """Request to ping."""
 
-    pass
-
 
 @datamodel
 class PingResponse:
     """Response for ping."""
-
-    pass

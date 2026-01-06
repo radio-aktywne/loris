@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-24.11";
+      url = "github:NixOS/nixpkgs/nixos-25.05";
     };
 
     flake-parts = {
@@ -35,15 +35,17 @@
         system,
         ...
       }: let
+        nix = pkgs.nix;
         node = pkgs.nodejs;
-        python = pkgs.python312.withPackages (ps: [ps.gst-python]);
+        python = pkgs.python313;
+        pythonpkgs = python.withPackages (ps: [ps.gst-python]);
         nil = pkgs.nil;
         task = pkgs.go-task;
         coreutils = pkgs.coreutils;
         trunk = pkgs.trunk-io;
-        poetry = pkgs.poetry;
+        uv = pkgs.uv;
         cacert = pkgs.cacert;
-        copier = pkgs.copier;
+        copier = pkgs.python313.withPackages (ps: [ps.copier]);
         glib = pkgs.glib;
         gstreamer = pkgs.gst_all_1.gstreamer;
         gstreamer-plugins-base = pkgs.gst_all_1.gst-plugins-base;
@@ -77,13 +79,15 @@
             name = "dev";
 
             packages = [
+              nix
               node
               python
+              pythonpkgs
               nil
               task
               coreutils
               trunk
-              poetry
+              uv
               cacert
               copier
               glib
@@ -96,27 +100,15 @@
               libnice
             ];
 
-            EXTRAPYTHONPATH = "${python}/${python.sitePackages}";
-
             # These are needed for custom GStreamer plugins
             GI_TYPELIB_PATH = "${glib.out}/lib/girepository-1.0:${gstreamer.out}/lib/girepository-1.0:${gstreamer-plugins-base}/lib/girepository-1.0:${gstreamer-plugins-good}/lib/girepository-1.0:${gstreamer-plugins-bad}/lib/girepository-1.0:${gstreamer-plugins-ugly}/lib/girepository-1.0:${gstreamer-plugins-rs}/lib/girepository-1.0:${libnice.out}/lib/girepository-1.0";
-            GST_PLUGIN_PATH = "${python}/lib/gstreamer-1.0:plugins";
+            GST_PLUGIN_PATH = "${pythonpkgs}/lib/gstreamer-1.0:plugins";
 
-            shellHook = ''
-              export TMPDIR=/tmp
-            '';
-          };
+            # Remove in the future: https://github.com/testcontainers/testcontainers-python/issues/874
+            PYTHONWARNINGS = "ignore::DeprecationWarning:testcontainers";
 
-          package = pkgs.mkShell {
-            name = "package";
-
-            packages = [
-              python
-              task
-              coreutils
-              poetry
-              cacert
-            ];
+            UV_PYTHON = python;
+            UV_PYTHON_PREFERENCE = "only-system";
 
             shellHook = ''
               export TMPDIR=/tmp
@@ -128,7 +120,8 @@
 
             packages = [
               python
-              poetry
+              pythonpkgs
+              uv
               cacert
               glib
               gstreamer
@@ -142,25 +135,12 @@
               su-exec
             ];
 
-            EXTRAPYTHONPATH = "${python}/${python.sitePackages}";
-
             # These are needed for custom GStreamer plugins
             GI_TYPELIB_PATH = "${glib.out}/lib/girepository-1.0:${gstreamer.out}/lib/girepository-1.0:${gstreamer-plugins-base}/lib/girepository-1.0:${gstreamer-plugins-good}/lib/girepository-1.0:${gstreamer-plugins-bad}/lib/girepository-1.0:${gstreamer-plugins-ugly}/lib/girepository-1.0:${gstreamer-plugins-rs}/lib/girepository-1.0:${libnice.out}/lib/girepository-1.0";
-            GST_PLUGIN_PATH = "${python}/lib/gstreamer-1.0:plugins";
+            GST_PLUGIN_PATH = "${pythonpkgs}/lib/gstreamer-1.0:plugins";
 
-            shellHook = ''
-              export TMPDIR=/tmp
-            '';
-          };
-
-          template = pkgs.mkShell {
-            name = "template";
-
-            packages = [
-              task
-              coreutils
-              copier
-            ];
+            UV_PYTHON = python;
+            UV_PYTHON_PREFERENCE = "only-system";
 
             shellHook = ''
               export TMPDIR=/tmp
@@ -171,11 +151,19 @@
             name = "lint";
 
             packages = [
+              nix
               node
+              python
+              pythonpkgs
               task
               coreutils
               trunk
+              uv
+              cacert
             ];
+
+            UV_PYTHON = python;
+            UV_PYTHON_PREFERENCE = "only-system";
 
             shellHook = ''
               export TMPDIR=/tmp
@@ -187,9 +175,10 @@
 
             packages = [
               python
+              pythonpkgs
               task
               coreutils
-              poetry
+              uv
               cacert
               glib
               gstreamer
@@ -201,11 +190,15 @@
               libnice
             ];
 
-            EXTRAPYTHONPATH = "${python}/${python.sitePackages}";
-
             # These are needed for custom GStreamer plugins
             GI_TYPELIB_PATH = "${glib.out}/lib/girepository-1.0:${gstreamer.out}/lib/girepository-1.0:${gstreamer-plugins-base}/lib/girepository-1.0:${gstreamer-plugins-good}/lib/girepository-1.0:${gstreamer-plugins-bad}/lib/girepository-1.0:${gstreamer-plugins-ugly}/lib/girepository-1.0:${gstreamer-plugins-rs}/lib/girepository-1.0:${libnice.out}/lib/girepository-1.0";
-            GST_PLUGIN_PATH = "${python}/lib/gstreamer-1.0:plugins";
+            GST_PLUGIN_PATH = "${pythonpkgs}/lib/gstreamer-1.0:plugins";
+
+            # Remove in the future: https://github.com/testcontainers/testcontainers-python/issues/874
+            PYTHONWARNINGS = "ignore::DeprecationWarning:testcontainers";
+
+            UV_PYTHON = python;
+            UV_PYTHON_PREFERENCE = "only-system";
 
             shellHook = ''
               export TMPDIR=/tmp

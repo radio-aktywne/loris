@@ -1,46 +1,63 @@
-[tool.poetry]
-package-mode = true
+[project]
 name = "loris"
 version = "0.11.0"
-description = "Broadcast streaming passthrough 🎤"
-authors = ["radio-aktywne <it@radioaktywne.pl>"]
+classifiers = ["Private :: Do Not Upload"]
+requires-python = "~= 3.13.0"
+dependencies = [
+  # Defining data models
+  "pydantic ~= 2.12.0",
+  # Loading configuration
+  "pydantic-settings ~= 2.12.0",
+  # Building CLIs
+  "typer ~= 0.21.0",
+  # Pretty-printing in the terminal
+  "rich ~= 14.2.0",
+  # Main API framework
+  "litestar ~= 2.19.0",
+  # ASGI server
+  "uvicorn[standard] ~= 0.40.0",
+  # Timezone data
+  "tzdata",
+  # Streaming utilities
+  "pystreams @ https://github.com/radio-aktywne/pystreams/archive/refs/tags/0.13.0.tar.gz",
+  # Locking utilities
+  "pylocks @ https://github.com/radio-aktywne/pylocks/archive/refs/tags/0.7.0.tar.gz",
+  # Storage utilities
+  "pystores @ https://github.com/radio-aktywne/pystores/archive/refs/tags/0.8.0.tar.gz",
+]
 
-[tool.poetry.dependencies]
-python = "^3.12"
-# Pydantic is used to define data models
-pydantic = "^2.10"
-pydantic-settings = "^2.8"
-# Typer and Rich are used to build CLIs
-typer = "^0.15"
-rich = "^13.9"
-# Litestar and Uvicorn are used to build async APIs
-litestar = "^2.14"
-uvicorn = { version = "^0.34", extras = ["standard"] }
-# For correct handling of timezones
-tzdata = "*"
-# Environment variables loader
-python-dotenv = "^1.0"
-# Streaming utilities
-pystreams = { git = "https://github.com/radio-aktywne/pystreams.git", tag = "0.12.0" }
-# Locking utilities
-pylocks = { git = "https://github.com/radio-aktywne/pylocks.git", tag = "0.6.0" }
-# Storage utilities
-pystores = { git = "https://github.com/radio-aktywne/pystores.git", tag = "0.7.0" }
+[dependency-groups]
+dev = [
+  # Testing framework
+  "pytest ~= 9.0.0",
+  # Asyncio support for pytest
+  "pytest-asyncio ~= 1.3.0",
+  # Containers interface for testing
+  "testcontainers ~= 4.13.0",
+]
 
-[tool.poetry.group.test.dependencies]
-pytest = "^8.3"
-# Asyncio support for pytest
-pytest-asyncio = "^0.25"
-
-[tool.poetry.scripts]
-# Register CLI
+[project.scripts]
 loris = "loris.__main__:cli"
+
+[build-system]
+requires = ["uv_build ~= 0.7.0"]
+build-backend = "uv_build"
+
+[tool.pyright]
+# Analyze code only in these directories
+include = ["src", "tests"]
+
+# Exclude these directories from analysis
+exclude = ["**/node_modules", "**/__pycache__", "**/.*", "plugins"]
+
+# Specify the path to the virtual environment
+venv = ".venv"
+venvPath = "."
+
+# Python version and platform to target
+pythonPlatform = "All"
+pythonVersion = "3.13"
 
 [tool.pytest.ini_options]
 # Remove in the future: https://github.com/pytest-dev/pytest-asyncio/issues/924
 asyncio_default_fixture_loop_scope = "function"
-
-# See: https://python-poetry.org/docs/pyproject/#poetry-and-pep-517
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
