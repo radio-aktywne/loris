@@ -1,6 +1,6 @@
 [project]
 name = "loris"
-version = "0.11.0"
+version = "0.12.0"
 classifiers = ["Private :: Do Not Upload"]
 requires-python = "~= 3.13.0"
 dependencies = [
