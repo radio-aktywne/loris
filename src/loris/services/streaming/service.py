@@ -24,8 +24,7 @@ class StreamingService:
 
     def _get_default_stun(self) -> m.STUNServer:
         return m.STUNServer(
-            host=self._config.streamer.stun.host,
-            port=self._config.streamer.stun.port,
+            host=self._config.streamer.stun.host, port=self._config.streamer.stun.port
         )
 
     async def _reserve_port(self) -> int:
@@ -76,13 +75,7 @@ class StreamingService:
         stun: m.STUNServer,
     ) -> None:
         runner = Runner(self._config)
-        stream = await runner.run(
-            port=port,
-            codec=codec,
-            fmt=fmt,
-            srt=srt,
-            stun=stun,
-        )
+        stream = await runner.run(port=port, codec=codec, fmt=fmt, srt=srt, stun=stun)
 
         await asyncio.wait_for(self._wait_for_stream_start(port), 5)
         task = asyncio.create_task(self._watch_stream(stream, port))
@@ -105,7 +98,4 @@ class StreamingService:
             await self._free_port(port)
             raise
 
-        return m.StreamResponse(
-            port=port,
-            stun=stun,
-        )
+        return m.StreamResponse(port=port, stun=stun)
