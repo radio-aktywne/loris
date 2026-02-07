@@ -11,7 +11,7 @@ from loris.api.exceptions import ConflictException
 from loris.api.routes.stream import errors as e
 from loris.api.routes.stream import models as m
 from loris.api.routes.stream.service import Service
-from loris.api.validator import Validator
+from loris.models.base import Serializable
 from loris.state import State
 
 
@@ -19,9 +19,7 @@ class DependenciesBuilder:
     """Builder for the dependencies of the controller."""
 
     async def _build_service(self, state: State) -> Service:
-        return Service(
-            streaming=state.streaming,
-        )
+        return Service(streaming=state.streaming)
 
     def build(self) -> Mapping[str, Provide]:
         """Build the dependencies."""
@@ -45,24 +43,18 @@ class Controller(BaseController):
         self,
         service: Service,
         data: Annotated[
-            m.StreamRequestData,
+            Serializable[m.StreamInput],
             Body(
-                description="Data for the request.",
+                description="Data for requesting a stream.",
             ),
         ],
-    ) -> Response[m.StreamResponseData]:
+    ) -> Response[Serializable[m.StreamDetails]]:
         """Request a stream."""
-        parsed_data = Validator[m.StreamRequestData].validate_object(data)
-
-        req = m.StreamRequest(
-            data=parsed_data,
-        )
+        request = m.StreamRequest(data=data.root)
 
         try:
-            res = await service.stream(req)
+            response = await service.stream(request)
         except e.ServiceBusyError as ex:
             raise ConflictException from ex
 
-        rdata = res.data
-
-        return Response(rdata)
+        return Response(Serializable(response.details))

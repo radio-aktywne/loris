@@ -19,35 +19,24 @@ class Service:
         try:
             yield
         except se.NoPortsAvailableError as ex:
-            raise e.ServiceBusyError(str(ex)) from ex
+            raise e.ServiceBusyError from ex
         except se.ServiceError as ex:
-            raise e.ServiceError(str(ex)) from ex
+            raise e.ServiceError from ex
 
     async def stream(self, request: m.StreamRequest) -> m.StreamResponse:
         """Start a stream."""
-        codec = request.data.codec
-        fmt = request.data.format
-        srt = request.data.srt
-        stun = request.data.stun
-
-        req = sm.StreamRequest(
-            codec=codec,
-            format=fmt,
-            srt=srt.map(),
-            stun=stun.map() if stun else None,
+        stream_request = sm.StreamRequest(
+            codec=request.data.codec,
+            format=request.data.format,
+            srt=request.data.srt.map(),
+            stun=request.data.stun.emap() if request.data.stun else None,
         )
 
         with self._handle_errors():
-            res = await self._streaming.stream(req)
+            stream_response = await self._streaming.stream(stream_request)
 
-        stun = res.stun
-        port = res.port
-
-        stun = m.STUNServer.rmap(stun)
-        data = m.StreamResponseData(
-            stun=stun,
-            port=port,
-        )
         return m.StreamResponse(
-            data=data,
+            details=m.StreamDetails(
+                stun=m.STUNServer.imap(stream_response.stun), port=stream_response.port
+            )
         )

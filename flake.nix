@@ -45,7 +45,6 @@
         trunk = pkgs.trunk-io;
         uv = pkgs.uv;
         cacert = pkgs.cacert;
-        copier = pkgs.python313.withPackages (ps: [ps.copier]);
         glib = pkgs.glib;
         gstreamer = pkgs.gst_all_1.gstreamer;
         gstreamer-plugins-base = pkgs.gst_all_1.gst-plugins-base;
@@ -89,7 +88,6 @@
               trunk
               uv
               cacert
-              copier
               glib
               gstreamer
               gstreamer-plugins-base

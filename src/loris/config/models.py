@@ -37,7 +37,7 @@ class ServerPortsConfig(BaseModel):
     """Configuration for the server RTP ports."""
 
     whip: AbstractSet[Annotated[int, Field(ge=1, le=65535)]] = Field(
-        default={10401}, min_length=1
+        default=frozenset({10401}), min_length=1
     )
     """Ports to select from when listening for WHIP requests."""
 

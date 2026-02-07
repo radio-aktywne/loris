@@ -17,9 +17,7 @@ class Runner:
     def _build_input_node(
         self, port: int, codec: m.Codec, stun: m.STUNServer
     ) -> GStreamerNode:
-        codecs = {
-            m.Codec.OPUS: "OPUS",
-        }
+        codecs = {m.Codec.OPUS: "OPUS"}
 
         return GStreamerNode(
             element="customwhipserversrc",
@@ -36,30 +34,24 @@ class Runner:
         return GStreamerNode(
             element="watchdog",
             properties={
-                "timeout": int(self._config.streamer.timeout.total_seconds() * 1000),
+                "timeout": int(self._config.streamer.timeout.total_seconds() * 1000)
             },
         )
 
     def _build_extractor_node(self, codec: m.Codec) -> GStreamerNode:
         match codec:
             case m.Codec.OPUS:
-                return GStreamerNode(
-                    element="rtpopusdepay",
-                )
+                return GStreamerNode(element="rtpopusdepay")
 
     def _build_parser_node(self, codec: m.Codec) -> GStreamerNode:
         match codec:
             case m.Codec.OPUS:
-                return GStreamerNode(
-                    element="opusparse",
-                )
+                return GStreamerNode(element="opusparse")
 
     def _build_muxer_node(self, fmt: m.Format) -> GStreamerNode:
         match fmt:
             case m.Format.OGG:
-                return GStreamerNode(
-                    element="oggmux",
-                )
+                return GStreamerNode(element="oggmux")
 
     def _build_output_node(self, srt: m.SRTServer) -> GStreamerNode:
         properties = {"uri": f"srt://{gethostbyname(srt.host)}:{srt.port}"}
@@ -67,10 +59,7 @@ class Runner:
         if srt.password is not None:
             properties["passphrase"] = srt.password
 
-        return GStreamerNode(
-            element="srtsink",
-            properties=properties,
-        )
+        return GStreamerNode(element="srtsink", properties=properties)
 
     def _build_stream_metadata(
         self,
