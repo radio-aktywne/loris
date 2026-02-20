@@ -35,9 +35,7 @@ class Controller(BaseController):
 
     @handlers.post(
         summary="Request a stream",
-        raises=[
-            ConflictException,
-        ],
+        raises=[ConflictException],
     )
     async def stream(
         self,

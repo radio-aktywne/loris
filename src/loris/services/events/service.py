@@ -1,9 +1,11 @@
 from collections.abc import AsyncGenerator
+from collections.abc import Set as AbstractSet
 
 from litestar.channels import ChannelsPlugin
 
 from loris.models.base import Serializable
-from loris.models.events.event import Event
+from loris.models.events.enums import EventType
+from loris.models.events.types import Event
 from loris.services.events import models as m
 
 
@@ -13,13 +15,18 @@ class EventsService:
     def __init__(self, channels: ChannelsPlugin) -> None:
         self._channels = channels
 
-    async def _subscribe(self) -> AsyncGenerator[Event]:
+    async def _subscribe(
+        self, types: AbstractSet[EventType] | None
+    ) -> AsyncGenerator[Event]:
         subscription = self._channels.start_subscription("events")
 
         async with subscription as subscriber:
-            async for event in subscriber.iter_events():
-                yield Serializable[Event].model_validate_json(event).root
+            async for data in subscriber.iter_events():
+                event = Serializable[Event].model_validate_json(data).root
+
+                if types is None or event.type in types:
+                    yield event
 
     async def subscribe(self, request: m.SubscribeRequest) -> m.SubscribeResponse:
         """Subscribe to app events."""
-        return m.SubscribeResponse(events=self._subscribe())
+        return m.SubscribeResponse(events=self._subscribe(request.types))
