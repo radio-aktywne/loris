@@ -18,7 +18,6 @@ async def test_post(client: AsyncTestClient) -> None:
     assert status == HTTP_201_CREATED
 
     data = response.json()
-    assert "port" in data
     assert "stun" in data
 
     stun = data["stun"]
@@ -29,7 +28,4 @@ async def test_post(client: AsyncTestClient) -> None:
     assert isinstance(host, str)
 
     port = stun["port"]
-    assert isinstance(port, int)
-
-    port = data["port"]
     assert isinstance(port, int)

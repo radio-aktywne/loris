@@ -16,8 +16,27 @@ class Format(StrEnum):
 
 
 @datamodel
-class SRTServer:
-    """SRT server configuration."""
+class STUN:
+    """STUN configuration."""
+
+    host: str
+    """Host of the STUN server."""
+
+    port: int
+    """Port of the STUN server."""
+
+
+@datamodel
+class WebRTC:
+    """WebRTC configuration."""
+
+    stun: STUN | None
+    """STUN configuration."""
+
+
+@datamodel
+class SRT:
+    """SRT configuration."""
 
     host: str
     """Host of the SRT server."""
@@ -30,17 +49,6 @@ class SRTServer:
 
 
 @datamodel
-class STUNServer:
-    """STUN server configuration."""
-
-    host: str
-    """Host of the STUN server."""
-
-    port: int
-    """Port of the STUN server."""
-
-
-@datamodel
 class StreamRequest:
     """Request to stream."""
 
@@ -50,19 +58,16 @@ class StreamRequest:
     format: Format
     """Audio format."""
 
-    srt: SRTServer
-    """SRT server configuration."""
+    srt: SRT
+    """SRT configuration."""
 
-    stun: STUNServer | None
-    """STUN server configuration."""
+    webrtc: WebRTC
+    """WebRTC configuration."""
 
 
 @datamodel
 class StreamResponse:
     """Response for stream."""
 
-    stun: STUNServer
-    """STUN server configuration."""
-
-    port: int
-    """Port to stream to."""
+    stun: STUN
+    """STUN configuration."""
