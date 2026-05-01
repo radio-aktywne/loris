@@ -20,17 +20,14 @@ curl \
     http://localhost:10400/stream
 ```
 
-You should receive a response containing the port number and STUN server
-that you can use to connect to the stream and start sending audio.
+You should receive a response containing the details
+that you need to use to connect to the stream within a limited time.
 
 ## Sending audio
 
 You can send audio to stream using any
 [`WHIP`](https://www.ietf.org/archive/id/draft-ietf-wish-whip-01.html)
 client.
-
-Remember to use the port you received in the previous step
-to connect to the stream.
 
 For example, from the browser you can do that using the
 [`@eyevinn/whip-web-client`](https://www.npmjs.com/package/@eyevinn/whip-web-client)

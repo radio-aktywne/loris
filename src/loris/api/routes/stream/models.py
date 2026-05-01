@@ -6,40 +6,57 @@ from loris.models.base import SerializableModel, datamodel
 from loris.services.streaming import models as sm
 
 
-class SRTServer(SerializableModel):
-    """SRT server configuration."""
+class STUN(SerializableModel):
+    """STUN configuration."""
+
+    host: str
+    """Host of the STUN server."""
+
+    port: Annotated[int, Field(ge=1, le=65535)]
+    """Port of the STUN server."""
+
+    @classmethod
+    def imap(cls, stun: sm.STUN) -> Self:
+        """Map to internal representation."""
+        return cls(host=stun.host, port=stun.port)
+
+    def emap(self) -> sm.STUN:
+        """Map to external representation."""
+        return sm.STUN(host=self.host, port=self.port)
+
+
+class WebRTC(SerializableModel):
+    """WebRTC configuration."""
+
+    stun: STUN | None = None
+    """STUN configuration."""
+
+    def emap(self) -> sm.WebRTC:
+        """Map to external representation."""
+        return sm.WebRTC(
+            stun=self.stun.emap() if self.stun else None,
+        )
+
+
+class SRT(SerializableModel):
+    """SRT configuration."""
 
     host: str
     """Host of the SRT server."""
 
-    port: int
+    port: Annotated[int, Field(ge=1, le=65535)]
     """Port of the SRT server."""
 
     password: str | None = None
     """Password to authenticate with the SRT server."""
 
-    def map(self) -> sm.SRTServer:
+    def emap(self) -> sm.SRT:
         """Map to external representation."""
-        return sm.SRTServer(host=self.host, port=self.port, password=self.password)
-
-
-class STUNServer(SerializableModel):
-    """STUN server configuration."""
-
-    host: str
-    """Host of the STUN server."""
-
-    port: int
-    """Port of the STUN server."""
-
-    @classmethod
-    def imap(cls, stun: sm.STUNServer) -> Self:
-        """Map to internal representation."""
-        return cls(host=stun.host, port=stun.port)
-
-    def emap(self) -> sm.STUNServer:
-        """Map to external representation."""
-        return sm.STUNServer(host=self.host, port=self.port)
+        return sm.SRT(
+            host=self.host,
+            port=self.port,
+            password=self.password,
+        )
 
 
 class StreamInput(SerializableModel):
@@ -51,21 +68,32 @@ class StreamInput(SerializableModel):
     format: sm.Format = sm.Format.OGG
     """Audio format."""
 
-    srt: SRTServer
-    """SRT server configuration."""
+    srt: SRT
+    """SRT configuration."""
 
-    stun: STUNServer | None = None
-    """STUN server configuration."""
+    webrtc: WebRTC = WebRTC()
+    """WebRTC configuration."""
+
+    def emap(self) -> sm.StreamRequest:
+        """Map to external representation."""
+        return sm.StreamRequest(
+            codec=self.codec,
+            format=self.format,
+            srt=self.srt.emap(),
+            webrtc=self.webrtc.emap(),
+        )
 
 
 class StreamDetails(SerializableModel):
     """Details of the stream."""
 
-    stun: STUNServer
-    """STUN server configuration."""
+    stun: STUN
+    """STUN configuration."""
 
-    port: Annotated[int, Field(ge=1, le=65535)]
-    """Port to stream to."""
+    @classmethod
+    def imap(cls, details: sm.StreamResponse) -> Self:
+        """Map to internal representation."""
+        return cls(stun=STUN.imap(details.stun))
 
 
 type StreamRequestData = StreamInput

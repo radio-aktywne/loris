@@ -51,7 +51,7 @@ class AppBuilder:
                 "config": self._config,
                 "streaming": StreamingService(
                     config=self._config,
-                    store=MemoryStore(set[int]()),
+                    store=MemoryStore(default=False),
                     lock=AsyncioLock(),
                 ),
             }

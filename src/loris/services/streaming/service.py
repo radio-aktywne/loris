@@ -1,5 +1,4 @@
 import asyncio
-from collections.abc import Set as AbstractSet
 
 from pylocks.base import Lock
 from pystores.base import Store
@@ -14,35 +13,29 @@ from loris.services.streaming.runner import Runner
 class StreamingService:
     """Service to manage streaming."""
 
-    def __init__(
-        self, config: Config, store: Store[AbstractSet[int]], lock: Lock
-    ) -> None:
+    def __init__(self, config: Config, store: Store[bool], lock: Lock) -> None:
         self._config = config
         self._store = store
         self._lock = lock
         self._tasks = set[asyncio.Task]()
 
-    def _get_default_stun(self) -> m.STUNServer:
-        return m.STUNServer(
-            host=self._config.streamer.stun.host, port=self._config.streamer.stun.port
+    def _get_default_stun(self) -> m.STUN:
+        return m.STUN(
+            host=self._config.streaming.stun.host, port=self._config.streaming.stun.port
         )
 
-    async def _reserve_port(self) -> int:
+    async def _reserve(self) -> None:
         async with self._lock:
-            used = await self._store.get()
-            available = set(self._config.server.ports.whip - used)
+            busy = await self._store.get()
 
-            if not available:
-                raise e.NoPortsAvailableError
+            if busy:
+                raise e.StreamBusyError
 
-            port = available.pop()
+            await self._store.set(True)
 
-            await self._store.set(used | {port})
-
-        return port
-
-    async def _wait_for_stream_start(self, port: int) -> None:
+    async def _wait_for_stream_start(self) -> None:
         host = self._config.server.host
+        port = self._config.server.ports.whip
 
         while True:
             try:
@@ -54,48 +47,33 @@ class StreamingService:
             else:
                 break
 
-    async def _free_port(self, port: int) -> None:
+    async def _free(self) -> None:
         async with self._lock:
-            used = set(await self._store.get())
-            used.remove(port)
-            await self._store.set(used)
+            await self._store.set(False)
 
-    async def _watch_stream(self, stream: Stream, port: int) -> None:
+    async def _watch_stream(self, stream: Stream) -> None:
         try:
             await stream.wait()
         finally:
-            await self._free_port(port)
+            await self._free()
 
-    async def _run(
-        self,
-        port: int,
-        codec: m.Codec,
-        fmt: m.Format,
-        srt: m.SRTServer,
-        stun: m.STUNServer,
-    ) -> None:
-        runner = Runner(self._config)
-        stream = await runner.run(port=port, codec=codec, fmt=fmt, srt=srt, stun=stun)
+    async def _run(self, request: m.StreamRequest) -> None:
+        runner = Runner(config=self._config, stun=self._get_default_stun())
+        stream = await runner.run(request)
 
-        await asyncio.wait_for(self._wait_for_stream_start(port), 5)
-        task = asyncio.create_task(self._watch_stream(stream, port))
+        await asyncio.wait_for(self._wait_for_stream_start(), 5)
+        task = asyncio.create_task(self._watch_stream(stream))
         self._tasks.add(task)
         task.add_done_callback(self._tasks.discard)
 
     async def stream(self, request: m.StreamRequest) -> m.StreamResponse:
         """Start a stream."""
-        codec = request.codec
-        fmt = request.format
-        srt = request.srt
-        stun = request.stun
-
-        port = await self._reserve_port()
-        stun = stun or self._get_default_stun()
+        await self._reserve()
 
         try:
-            await self._run(port, codec, fmt, srt, stun)
+            await self._run(request)
         except Exception:
-            await self._free_port(port)
+            await self._free()
             raise
 
-        return m.StreamResponse(port=port, stun=stun)
+        return m.StreamResponse(stun=request.webrtc.stun or self._get_default_stun())
