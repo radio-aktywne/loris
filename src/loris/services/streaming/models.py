@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from enum import StrEnum
 
 from loris.models.base import datamodel
@@ -63,6 +64,9 @@ class StreamRequest:
 
     format: Format
     """Audio format."""
+
+    metadata: Mapping[str, str] | None
+    """Metadata to attach to the stream."""
 
     samplerate: int
     """Audio sample rate in Hz."""

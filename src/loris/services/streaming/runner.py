@@ -1,3 +1,4 @@
+import re
 from math import ceil
 from socket import gethostbyname
 
@@ -75,6 +76,25 @@ class Runner:
             },
         )
 
+    def _build_metadata_node(self, request: m.StreamRequest) -> GStreamerNode:
+        def escape(value: str) -> str:
+            return re.sub(r'([",=\\])', r"\\\1", value)
+
+        return GStreamerNode(
+            element="taginject",
+            properties={
+                "merge-mode": "keep",
+                "tags": f'"{
+                    ",".join(
+                        f"{escape(key)}={escape(value)}"
+                        for key, value in request.metadata.items()
+                    )
+                }"',
+            }
+            if request.metadata
+            else None,
+        )
+
     def _build_encoder_node(self, request: m.StreamRequest) -> GStreamerNode:
         match request.codec:
             case m.Codec.OPUS:
@@ -113,6 +133,7 @@ class Runner:
                 self._build_converter_node(),
                 self._build_resampler_node(),
                 self._build_caps_node(request),
+                self._build_metadata_node(request),
                 self._build_encoder_node(request),
                 self._build_muxer_node(request),
                 self._build_output_node(request),
