@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from typing import Annotated, Self
 
 from pydantic import Field
@@ -74,6 +75,9 @@ class StreamInput(SerializableModel):
     format: sm.Format = sm.Format.OGG
     """Audio format."""
 
+    metadata: Mapping[str, str] | None = None
+    """Metadata to attach to the stream."""
+
     samplerate: Annotated[int, Field(ge=1)] = 48000
     """Audio sample rate in Hz."""
 
@@ -90,6 +94,7 @@ class StreamInput(SerializableModel):
             channels=self.channels,
             codec=self.codec,
             format=self.format,
+            metadata=self.metadata,
             samplerate=self.samplerate,
             srt=self.srt.emap(),
             webrtc=self.webrtc.emap(),
