@@ -50,6 +50,38 @@ class Runner:
             case m.Codec.OPUS:
                 return GStreamerNode(element="opusparse")
 
+    def _build_queue_node(self) -> GStreamerNode:
+        return GStreamerNode(element="queue", properties={"leaky": "downstream"})
+
+    def _build_decoder_node(self, request: m.StreamRequest) -> GStreamerNode:
+        match request.codec:
+            case m.Codec.OPUS:
+                return GStreamerNode(
+                    element="opusdec",
+                    properties={"phase-inversion": request.channels > 1},
+                )
+
+    def _build_converter_node(self) -> GStreamerNode:
+        return GStreamerNode(element="audioconvert")
+
+    def _build_resampler_node(self) -> GStreamerNode:
+        return GStreamerNode(element="audioresample")
+
+    def _build_caps_node(self, request: m.StreamRequest) -> GStreamerNode:
+        return GStreamerNode(
+            element="capsfilter",
+            properties={
+                "caps": f"audio/x-raw,channels={request.channels},rate={request.samplerate}"
+            },
+        )
+
+    def _build_encoder_node(self, request: m.StreamRequest) -> GStreamerNode:
+        match request.codec:
+            case m.Codec.OPUS:
+                return GStreamerNode(
+                    element="opusenc", properties={"bitrate": request.bitrate}
+                )
+
     def _build_muxer_node(self, request: m.StreamRequest) -> GStreamerNode:
         match request.format:
             case m.Format.OGG:
@@ -76,6 +108,12 @@ class Runner:
                 self._build_watchdog_node(),
                 self._build_extractor_node(request),
                 self._build_parser_node(request),
+                self._build_queue_node(),
+                self._build_decoder_node(request),
+                self._build_converter_node(),
+                self._build_resampler_node(),
+                self._build_caps_node(request),
+                self._build_encoder_node(request),
                 self._build_muxer_node(request),
                 self._build_output_node(request),
             ],

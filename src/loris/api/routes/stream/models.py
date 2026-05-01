@@ -62,11 +62,20 @@ class SRT(SerializableModel):
 class StreamInput(SerializableModel):
     """Data for requesting a stream."""
 
+    bitrate: Annotated[int, Field(ge=1)] = 256000
+    """Audio bitrate in bits per second."""
+
+    channels: Annotated[int, Field(ge=1)] = 2
+    """Number of audio channels."""
+
     codec: sm.Codec = sm.Codec.OPUS
     """Audio codec."""
 
     format: sm.Format = sm.Format.OGG
     """Audio format."""
+
+    samplerate: Annotated[int, Field(ge=1)] = 48000
+    """Audio sample rate in Hz."""
 
     srt: SRT
     """SRT configuration."""
@@ -77,8 +86,11 @@ class StreamInput(SerializableModel):
     def emap(self) -> sm.StreamRequest:
         """Map to external representation."""
         return sm.StreamRequest(
+            bitrate=self.bitrate,
+            channels=self.channels,
             codec=self.codec,
             format=self.format,
+            samplerate=self.samplerate,
             srt=self.srt.emap(),
             webrtc=self.webrtc.emap(),
         )
