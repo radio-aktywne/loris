@@ -30,7 +30,9 @@ class STUN(SerializableModel):
 class WebRTC(SerializableModel):
     """WebRTC configuration."""
 
-    latency: Annotated[timedelta, Field(ge=timedelta())] = timedelta(milliseconds=200)
+    latency: Annotated[
+        timedelta, Field(ge=timedelta(milliseconds=20), le=timedelta(milliseconds=8000))
+    ] = timedelta(milliseconds=200)
     """Target latency for buffering incoming stream."""
 
     stun: STUN | None = None
@@ -70,10 +72,10 @@ class SRT(SerializableModel):
 class StreamInput(SerializableModel):
     """Data for requesting a stream."""
 
-    bitrate: Annotated[int, Field(ge=1)] = 256000
+    bitrate: Annotated[int, Field(ge=32000, le=512000)] = 256000
     """Audio bitrate in bits per second."""
 
-    channels: Annotated[int, Field(ge=1)] = 2
+    channels: Annotated[int, Field(ge=1, le=8)] = 2
     """Number of audio channels."""
 
     codec: sm.Codec = sm.Codec.OPUS
@@ -85,7 +87,7 @@ class StreamInput(SerializableModel):
     metadata: Mapping[str, str] | None = None
     """Metadata to attach to the stream."""
 
-    samplerate: Annotated[int, Field(ge=1)] = 48000
+    samplerate: Annotated[int, Field(ge=8000, le=192000)] = 48000
     """Audio sample rate in Hz."""
 
     srt: SRT
