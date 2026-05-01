@@ -52,11 +52,20 @@ class SRT:
 class StreamRequest:
     """Request to stream."""
 
+    bitrate: int
+    """Audio bitrate in bits per second."""
+
+    channels: int
+    """Number of audio channels."""
+
     codec: Codec
     """Audio codec."""
 
     format: Format
     """Audio format."""
+
+    samplerate: int
+    """Audio sample rate in Hz."""
 
     srt: SRT
     """SRT configuration."""
