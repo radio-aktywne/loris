@@ -1,4 +1,5 @@
 from collections.abc import Mapping
+from datetime import timedelta
 from typing import Annotated, Self
 
 from pydantic import Field
@@ -29,13 +30,16 @@ class STUN(SerializableModel):
 class WebRTC(SerializableModel):
     """WebRTC configuration."""
 
+    latency: Annotated[timedelta, Field(ge=timedelta())] = timedelta(milliseconds=200)
+    """Target latency for buffering incoming stream."""
+
     stun: STUN | None = None
     """STUN configuration."""
 
     def emap(self) -> sm.WebRTC:
         """Map to external representation."""
         return sm.WebRTC(
-            stun=self.stun.emap() if self.stun else None,
+            latency=self.latency, stun=self.stun.emap() if self.stun else None
         )
 
 
@@ -44,6 +48,11 @@ class SRT(SerializableModel):
 
     host: str
     """Host of the SRT server."""
+
+    latency: Annotated[
+        timedelta, Field(ge=timedelta(milliseconds=20), le=timedelta(milliseconds=8000))
+    ] = timedelta(milliseconds=200)
+    """Target latency for buffering outgoing stream."""
 
     port: Annotated[int, Field(ge=1, le=65535)]
     """Port of the SRT server."""
@@ -54,9 +63,7 @@ class SRT(SerializableModel):
     def emap(self) -> sm.SRT:
         """Map to external representation."""
         return sm.SRT(
-            host=self.host,
-            port=self.port,
-            password=self.password,
+            host=self.host, latency=self.latency, port=self.port, password=self.password
         )
 
 

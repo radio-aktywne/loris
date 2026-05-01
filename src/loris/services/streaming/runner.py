@@ -41,6 +41,15 @@ class Runner:
             },
         )
 
+    def _build_buffer_node(self, request: m.StreamRequest) -> GStreamerNode:
+        return GStreamerNode(
+            element="rtpjitterbuffer",
+            properties={
+                "latency": ceil(request.webrtc.latency.total_seconds() * 1000),
+                "mode": "slave",
+            },
+        )
+
     def _build_extractor_node(self, request: m.StreamRequest) -> GStreamerNode:
         match request.codec:
             case m.Codec.OPUS:
@@ -111,6 +120,7 @@ class Runner:
         return GStreamerNode(
             element="srtsink",
             properties={
+                "latency": ceil(request.srt.latency.total_seconds() * 1000),
                 "mode": "caller",
                 "uri": f"srt://{gethostbyname(request.srt.host)}:{request.srt.port}",
                 **(
@@ -126,6 +136,7 @@ class Runner:
             nodes=[
                 self._build_input_node(request),
                 self._build_watchdog_node(),
+                self._build_buffer_node(request),
                 self._build_extractor_node(request),
                 self._build_parser_node(request),
                 self._build_queue_node(),

@@ -1,4 +1,5 @@
 from collections.abc import Mapping
+from datetime import timedelta
 from enum import StrEnum
 
 from loris.models.base import datamodel
@@ -31,6 +32,9 @@ class STUN:
 class WebRTC:
     """WebRTC configuration."""
 
+    latency: timedelta
+    """Target latency for buffering incoming stream."""
+
     stun: STUN | None
     """STUN configuration."""
 
@@ -41,6 +45,9 @@ class SRT:
 
     host: str
     """Host of the SRT server."""
+
+    latency: timedelta
+    """Target latency for buffering outgoing stream."""
 
     port: int
     """Port of the SRT server."""
