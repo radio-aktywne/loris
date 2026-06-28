@@ -20,11 +20,11 @@ class STUN(SerializableModel):
 
     @classmethod
     def imap(cls, stun: sm.STUN) -> Self:
-        """Map to internal representation."""
+        """Map from internal representation."""
         return cls(host=stun.host, port=stun.port)
 
     def emap(self) -> sm.STUN:
-        """Map to external representation."""
+        """Map to internal representation."""
         return sm.STUN(host=self.host, port=self.port)
 
 
@@ -39,8 +39,8 @@ class WebRTC(SerializableModel):
     stun: STUN | None = None
     """STUN configuration."""
 
-    def emap(self) -> sm.WebRTC:
-        """Map to external representation."""
+    def map(self) -> sm.WebRTC:
+        """Map to internal representation."""
         return sm.WebRTC(
             latency=self.latency, stun=self.stun.emap() if self.stun else None
         )
@@ -63,8 +63,8 @@ class SRT(SerializableModel):
     password: str | None = None
     """Password to authenticate with the SRT server."""
 
-    def emap(self) -> sm.SRT:
-        """Map to external representation."""
+    def map(self) -> sm.SRT:
+        """Map to internal representation."""
         return sm.SRT(
             host=self.host, latency=self.latency, port=self.port, password=self.password
         )
@@ -97,8 +97,8 @@ class StreamInput(SerializableModel):
     webrtc: WebRTC = WebRTC()
     """WebRTC configuration."""
 
-    def emap(self) -> sm.StreamRequest:
-        """Map to external representation."""
+    def map(self) -> sm.StreamRequest:
+        """Map to internal representation."""
         return sm.StreamRequest(
             bitrate=self.bitrate,
             channels=self.channels,
@@ -106,8 +106,8 @@ class StreamInput(SerializableModel):
             format=self.format,
             metadata=self.metadata,
             samplerate=self.samplerate,
-            srt=self.srt.emap(),
-            webrtc=self.webrtc.emap(),
+            srt=self.srt.map(),
+            webrtc=self.webrtc.map(),
         )
 
 
@@ -118,8 +118,8 @@ class StreamDetails(SerializableModel):
     """STUN configuration."""
 
     @classmethod
-    def imap(cls, details: sm.StreamResponse) -> Self:
-        """Map to internal representation."""
+    def map(cls, details: sm.StreamResponse) -> Self:
+        """Map from internal representation."""
         return cls(stun=STUN.imap(details.stun))
 
 

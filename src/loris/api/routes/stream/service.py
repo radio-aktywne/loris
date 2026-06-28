@@ -24,9 +24,9 @@ class Service:
 
     async def stream(self, request: m.StreamRequest) -> m.StreamResponse:
         """Start a stream."""
-        stream_request = request.data.emap()
+        stream_request = request.data.map()
 
         with self._handle_errors():
             stream_response = await self._streaming.stream(stream_request)
 
-        return m.StreamResponse(details=m.StreamDetails.imap(stream_response))
+        return m.StreamResponse(details=m.StreamDetails.map(stream_response))
