@@ -4,6 +4,7 @@ from datetime import timedelta
 from pydantic import BaseModel, Field
 
 from loris.config.base import BaseConfig
+from loris.utils.time import Timedelta
 
 
 class ServerPortsConfig(BaseModel):
@@ -48,7 +49,7 @@ class StreamingConfig(BaseModel):
     stun: STUNConfig = STUNConfig()
     """Configuration for the STUN server."""
 
-    timeout: timedelta = Field(default=timedelta(minutes=1), ge=timedelta())
+    timeout: Timedelta = Field(default=timedelta(minutes=1), ge=timedelta())
     """Time after which a stream will be stopped if no connections are made."""
 
 

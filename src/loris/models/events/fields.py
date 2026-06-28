@@ -3,7 +3,7 @@ from typing import Annotated
 from pydantic import Field
 
 from loris.models.base import SerializableModel
-from loris.utils.time import NaiveDatetime
+from loris.utils.time import UTCDatetime
 
 type TypeField[T] = Annotated[
     T,
@@ -11,7 +11,7 @@ type TypeField[T] = Annotated[
 ]
 
 type CreatedAtField = Annotated[
-    NaiveDatetime,
+    UTCDatetime,
     Field(description="Datetime in UTC at which the event was created."),
 ]
 

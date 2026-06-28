@@ -5,7 +5,7 @@ from pydantic import Field
 from loris.models.base import SerializableModel
 from loris.models.events.enums import EventType
 from loris.models.events.fields import CreatedAtField, DataField, TypeField
-from loris.utils.time import naiveutcnow
+from loris.utils.time import awareutcnow
 
 
 class TestEventData(SerializableModel):
@@ -19,5 +19,5 @@ class TestEvent(SerializableModel):
     """Event that is emitted for testing purposes."""
 
     type: TypeField[Literal[EventType.TEST]] = EventType.TEST
-    created_at: CreatedAtField = Field(default_factory=naiveutcnow)
+    created_at: CreatedAtField = Field(default_factory=awareutcnow)
     data: DataField[TestEventData]

@@ -2,5 +2,9 @@ class ServiceError(Exception):
     """Base class for service errors."""
 
 
-class ServiceBusyError(ServiceError):
-    """Raised when the service is busy."""
+class ValidationError(ServiceError):
+    """Raised when a validation error occurs."""
+
+
+class ConflictError(ValidationError):
+    """Raised when a conflict error occurs."""
