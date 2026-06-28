@@ -52,7 +52,7 @@ class Controller(BaseController):
 
         try:
             response = await service.stream(request)
-        except e.ServiceBusyError as ex:
+        except e.ConflictError as ex:
             raise ConflictException from ex
 
         return Response(Serializable(response.details))

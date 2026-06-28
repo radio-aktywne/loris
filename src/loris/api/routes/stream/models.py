@@ -6,6 +6,7 @@ from pydantic import Field
 
 from loris.models.base import SerializableModel, datamodel
 from loris.services.streaming import models as sm
+from loris.utils.time import Timedelta
 
 
 class STUN(SerializableModel):
@@ -31,7 +32,7 @@ class WebRTC(SerializableModel):
     """WebRTC configuration."""
 
     latency: Annotated[
-        timedelta, Field(ge=timedelta(milliseconds=20), le=timedelta(milliseconds=8000))
+        Timedelta, Field(ge=timedelta(milliseconds=20), le=timedelta(milliseconds=8000))
     ] = timedelta(milliseconds=200)
     """Target latency for buffering incoming stream."""
 
@@ -52,7 +53,7 @@ class SRT(SerializableModel):
     """Host of the SRT server."""
 
     latency: Annotated[
-        timedelta, Field(ge=timedelta(milliseconds=20), le=timedelta(milliseconds=8000))
+        Timedelta, Field(ge=timedelta(milliseconds=20), le=timedelta(milliseconds=8000))
     ] = timedelta(milliseconds=200)
     """Target latency for buffering outgoing stream."""
 

@@ -18,7 +18,7 @@ class Service:
         try:
             yield
         except se.StreamBusyError as ex:
-            raise e.ServiceBusyError from ex
+            raise e.ConflictError from ex
         except se.ServiceError as ex:
             raise e.ServiceError from ex
 
