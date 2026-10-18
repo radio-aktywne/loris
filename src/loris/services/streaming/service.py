@@ -5,8 +5,7 @@ from pystores.base import Store
 from pystreams.base import Stream
 
 from loris.config.models import Config
-from loris.services.streaming import errors as e
-from loris.services.streaming import models as m
+from loris.services.streaming import errors as e, models as m
 from loris.services.streaming.runner import Runner
 
 

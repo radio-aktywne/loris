@@ -2,6 +2,7 @@ from typing import Any
 
 import gi
 
+
 gi.require_version("GObject", "2.0")
 gi.require_version("Gst", "1.0")
 gi.require_version("GstWebRTC", "1.0")
@@ -101,7 +102,7 @@ class CustomWhipServerSrc(Gst.Bin):
 
         return self._min
 
-    @min.setter
+    @min.setter  # noqa: A003
     def min(self, value: int) -> None:
         if self._agent is not None:
             self._agent.set_property("min-rtp-port", value)
@@ -123,7 +124,7 @@ class CustomWhipServerSrc(Gst.Bin):
 
         return self._max
 
-    @max.setter
+    @max.setter  # noqa: A003
     def max(self, value: int) -> None:
         if self._agent is not None:
             self._agent.set_property("max-rtp-port", value)

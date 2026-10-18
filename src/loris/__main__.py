@@ -7,6 +7,7 @@ from loris.config.errors import ConfigError
 from loris.console import FallbackConsoleBuilder
 from loris.server import Server
 
+
 cli = CliBuilder().build()
 
 

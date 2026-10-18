@@ -1,10 +1,8 @@
 from collections.abc import Generator
 from contextlib import contextmanager
 
-from loris.api.routes.test import errors as e
-from loris.api.routes.test import models as m
-from loris.services.test import errors as te
-from loris.services.test import models as tm
+from loris.api.routes.test import errors as e, models as m
+from loris.services.test import errors as te, models as tm
 from loris.services.test.service import TestService
 
 
