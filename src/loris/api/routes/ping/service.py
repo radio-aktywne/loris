@@ -1,10 +1,8 @@
 from collections.abc import Generator
 from contextlib import contextmanager
 
-from loris.api.routes.ping import errors as e
-from loris.api.routes.ping import models as m
-from loris.services.ping import errors as pe
-from loris.services.ping import models as pm
+from loris.api.routes.ping import errors as e, models as m
+from loris.services.ping import errors as pe, models as pm
 from loris.services.ping.service import PingService
 
 

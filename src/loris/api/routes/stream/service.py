@@ -1,8 +1,7 @@
 from collections.abc import Generator
 from contextlib import contextmanager
 
-from loris.api.routes.stream import errors as e
-from loris.api.routes.stream import models as m
+from loris.api.routes.stream import errors as e, models as m
 from loris.services.streaming import errors as se
 from loris.services.streaming.service import StreamingService
 

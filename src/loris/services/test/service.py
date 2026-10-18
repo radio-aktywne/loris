@@ -2,8 +2,7 @@ from litestar.channels import ChannelsPlugin
 
 from loris.models.events import test as ev
 from loris.models.events.types import Event
-from loris.services.test import errors as e
-from loris.services.test import models as m
+from loris.services.test import errors as e, models as m
 
 
 class TestService:

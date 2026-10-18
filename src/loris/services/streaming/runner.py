@@ -81,7 +81,9 @@ class Runner:
         return GStreamerNode(
             element="capsfilter",
             properties={
-                "caps": f"audio/x-raw,channels={request.channels},rate={request.samplerate}"
+                "caps": (
+                    f"audio/x-raw,channels={request.channels},rate={request.samplerate}"
+                ),
             },
         )
 

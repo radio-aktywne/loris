@@ -5,6 +5,7 @@ from pydantic import Field
 from loris.models.base import SerializableModel
 from loris.utils.time import UTCDatetime
 
+
 type TypeField[T] = Annotated[
     T,
     Field(description="Type of the event."),
