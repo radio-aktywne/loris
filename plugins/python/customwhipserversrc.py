@@ -52,6 +52,7 @@ class CustomWhipServerSrc(Gst.Bin):
 
         whip.connect("pad-added", self._on_pad_added)
         whip.connect("pad-removed", self._on_pad_removed)
+        whip.connect("element-removed", self._on_element_removed)
 
         return whip
 
@@ -149,18 +150,31 @@ class CustomWhipServerSrc(Gst.Bin):
     def _on_pad_added(
         self, element: Gst.Element, pad: Gst.Pad, *args: Any, **kwargs: Any
     ) -> None:
-        """Handle the pad-added signal from the whipserversrc element."""
-        name = pad.get_name()
-        ghost_pad = Gst.GhostPad.new(name, pad)
-        self.add_pad(ghost_pad)
+        self.add_pad(Gst.GhostPad.new(pad.get_name(), pad))
 
     def _on_pad_removed(
         self, element: Gst.Element, pad: Gst.Pad, *args: Any, **kwargs: Any
     ) -> None:
-        """Handle the pad-removed signal from the whipserversrc element."""
-        name = pad.get_name()
-        ghost_pad = self.get_static_pad(name)
-        self.remove_pad(ghost_pad)
+        self.remove_pad(self.get_static_pad(pad.get_name()))
+
+    def _on_element_removed(self, element: Gst.Bin, removed: Gst.Element) -> None:
+        if not isinstance(removed, Gst.Bin):
+            return
+
+        pipeline = self._get_pipeline()
+        if pipeline is not None:
+            pipeline.post_message(Gst.Message.new_eos(pipeline))
+
+    def _get_pipeline(self) -> Gst.Pipeline | None:
+        parent = self.get_parent()
+
+        while parent is not None:
+            if isinstance(parent, Gst.Pipeline):
+                return parent
+
+            parent = parent.get_parent()
+
+        return None
 
     def _on_webrtcbin_ready(
         self,
@@ -170,7 +184,6 @@ class CustomWhipServerSrc(Gst.Bin):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """Handle the webrtcbin-ready signal from the signaller."""
         self._webrtcbin = webrtcbin
         self._agent = self._webrtcbin.get_property("ice-agent")
 
