@@ -2,6 +2,7 @@ from collections.abc import Sequence
 
 import uvicorn
 from litestar import Litestar
+from uvicorn.config import LOGGING_CONFIG
 
 from loris.config.models import ServerConfig
 
@@ -25,6 +26,17 @@ class Server:
             self._app,
             host=self._config.host,
             port=self._config.ports.http,
+            log_config={
+                **LOGGING_CONFIG,
+                "loggers": {
+                    **LOGGING_CONFIG["loggers"],
+                    "loris": {
+                        "handlers": ["default"],
+                        "level": "INFO",
+                        "propagate": False,
+                    },
+                },
+            },
             forwarded_allow_ips=list(self._config.trusted)
             if isinstance(self._config.trusted, Sequence)
             else self._config.trusted,

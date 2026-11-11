@@ -9,7 +9,7 @@ from litestar.plugins import PluginProtocol
 from pylocks.asyncio import AsyncioLock
 from pystores.memory import MemoryStore
 
-from loris.api.lifespans import TestLifespan
+from loris.api.lifespans import StreamingLifespan, TestLifespan
 from loris.api.openapi import OpenAPIConfigBuilder
 from loris.api.plugins.pydantic import PydanticPlugin
 from loris.api.routes.router import router
@@ -34,6 +34,7 @@ class AppBuilder:
     ) -> Sequence[Callable[[Litestar], AbstractAsyncContextManager]]:
         return [
             TestLifespan,
+            StreamingLifespan,
         ]
 
     def _build_openapi_config(self) -> OpenAPIConfig:

@@ -34,3 +34,20 @@ class TestLifespan(Lifespan):
         traceback: TracebackType | None,
     ) -> None:
         return
+
+
+class StreamingLifespan(Lifespan):
+    """Lifespan for the streaming service."""
+
+    @override
+    async def __aenter__(self) -> None:
+        return
+
+    @override
+    async def __aexit__(
+        self,
+        exception_type: type[BaseException] | None,
+        exception: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
+        await self.state.streaming.close()

@@ -360,7 +360,7 @@ requires-dist = [
     { name = "pydantic-settings", specifier = "~=2.15.0" },
     { name = "pylocks", url = "https://github.com/radio-aktywne/pylocks/archive/refs/tags/0.9.0.tar.gz" },
     { name = "pystores", url = "https://github.com/radio-aktywne/pystores/archive/refs/tags/0.10.0.tar.gz" },
-    { name = "pystreams", url = "https://github.com/radio-aktywne/pystreams/archive/refs/tags/0.15.0.tar.gz" },
+    { name = "pystreams", url = "https://github.com/radio-aktywne/pystreams/archive/refs/tags/0.16.0.tar.gz" },
     { name = "rich", specifier = "~=15.0.0" },
     { name = "typer", specifier = "~=0.27.0" },
     { name = "tzdata" },
@@ -692,9 +692,9 @@ sdist = { hash = "sha256:78c4959659092c157800d81d36fd867d418b8a541a560f22f8c4ddf
 
 [[package]]
 name = "pystreams"
-version = "0.15.0"
-source = { url = "https://github.com/radio-aktywne/pystreams/archive/refs/tags/0.15.0.tar.gz" }
-sdist = { hash = "sha256:f902c4f4e850b5b9b2aa2616b70ee5a1d23bfa7490d1a227732d8d2b6ca34567" }
+version = "0.16.0"
+source = { url = "https://github.com/radio-aktywne/pystreams/archive/refs/tags/0.16.0.tar.gz" }
+sdist = { hash = "sha256:7a3681bf119cd775aa52ed1f3b1d3a8ebaf25bb2a85772dfafd5abb02aa27af1" }
 
 [[package]]
 name = "pytest"
