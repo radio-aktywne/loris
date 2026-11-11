@@ -16,7 +16,7 @@ dependencies = [
   # Storage utilities
   "pystores @ https://github.com/radio-aktywne/pystores/archive/refs/tags/0.10.0.tar.gz",
   # Streaming utilities
-  "pystreams @ https://github.com/radio-aktywne/pystreams/archive/refs/tags/0.15.0.tar.gz",
+  "pystreams @ https://github.com/radio-aktywne/pystreams/archive/refs/tags/0.16.0.tar.gz",
   # Pretty-printing in the terminal
   "rich ~= 15.0.0",
   # Building CLIs

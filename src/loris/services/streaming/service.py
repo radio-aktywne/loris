@@ -1,4 +1,5 @@
 import asyncio
+from contextlib import suppress
 
 from pylocks.base import Lock
 from pystores.base import Store
@@ -16,7 +17,7 @@ class StreamingService:
         self._config = config
         self._store = store
         self._lock = lock
-        self._tasks = set[asyncio.Task]()
+        self._task: asyncio.Task | None = None
 
     def _get_default_stun(self) -> m.STUN:
         return m.STUN(
@@ -50,9 +51,21 @@ class StreamingService:
         async with self._lock:
             await self._store.set(False)
 
+    async def _stop_stream(self, stream: Stream) -> None:
+        for action in (stream.terminate, stream.kill):
+            with suppress(Exception):
+                await asyncio.wait_for(action(), timeout=5)
+
+            with suppress(Exception):
+                await asyncio.wait_for(stream.wait(), timeout=5)
+                return
+
     async def _watch_stream(self, stream: Stream) -> None:
         try:
             await stream.wait()
+        except asyncio.CancelledError:
+            await self._stop_stream(stream)
+            raise
         finally:
             await self._free()
 
@@ -60,10 +73,18 @@ class StreamingService:
         runner = Runner(config=self._config, stun=self._get_default_stun())
         stream = await runner.run(request)
 
-        await asyncio.wait_for(self._wait_for_stream_start(), 5)
-        task = asyncio.create_task(self._watch_stream(stream))
-        self._tasks.add(task)
-        task.add_done_callback(self._tasks.discard)
+        try:
+            await asyncio.wait_for(self._wait_for_stream_start(), 5)
+        except BaseException:
+            await self._stop_stream(stream)
+            raise
+
+        def on_done(task: asyncio.Task) -> None:
+            if self._task is task:
+                self._task = None
+
+        self._task = asyncio.create_task(self._watch_stream(stream), eager_start=True)
+        self._task.add_done_callback(on_done)
 
     async def stream(self, request: m.StreamRequest) -> m.StreamResponse:
         """Start a stream."""
@@ -71,8 +92,17 @@ class StreamingService:
 
         try:
             await self._run(request)
-        except Exception:
+        except BaseException:
             await self._free()
             raise
 
         return m.StreamResponse(stun=request.webrtc.stun or self._get_default_stun())
+
+    async def close(self) -> None:
+        """Close gracefully."""
+        if self._task is None:
+            return
+
+        self._task.cancel()
+        with suppress(asyncio.CancelledError):
+            await self._task

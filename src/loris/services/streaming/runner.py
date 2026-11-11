@@ -4,10 +4,11 @@ from socket import gethostbyname
 
 from pystreams.base import Stream
 from pystreams.gstreamer import GStreamerNode, GStreamerStreamMetadata
-from pystreams.process import ProcessBasedStreamFactory, ProcessBasedStreamMetadata
+from pystreams.process import ProcessBasedStreamMetadata
 
 from loris.config.models import Config
 from loris.services.streaming import models as m
+from loris.services.streaming.stream import LoggedStreamFactory
 
 
 class Runner:
@@ -151,10 +152,16 @@ class Runner:
                 self._build_muxer_node(request),
                 self._build_output_node(request),
             ],
+            options={
+                "no-position": True,
+            },
+            env={
+                "GST_DEBUG_NO_COLOR": "1",
+            },
         )
 
     async def _run_stream(self, metadata: ProcessBasedStreamMetadata) -> Stream:
-        return await ProcessBasedStreamFactory().create(metadata)
+        return await LoggedStreamFactory().create(metadata)
 
     async def run(self, request: m.StreamRequest) -> Stream:
         """Run the stream."""
