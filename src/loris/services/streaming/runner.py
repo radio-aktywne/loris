@@ -1,10 +1,11 @@
 import re
+import signal
 from math import ceil
 from socket import gethostbyname
 
 from pystreams.base import Stream
 from pystreams.gstreamer import GStreamerNode, GStreamerStreamMetadata
-from pystreams.process import ProcessBasedStreamMetadata
+from pystreams.process import ProcessBasedStreamMetadata, ProcessSignals
 
 from loris.config.models import Config
 from loris.services.streaming import models as m
@@ -117,15 +118,23 @@ class Runner:
     def _build_muxer_node(self, request: m.StreamRequest) -> GStreamerNode:
         match request.format:
             case m.Format.OGG:
-                return GStreamerNode(element="oggmux")
+                return GStreamerNode(
+                    element="oggmux",
+                    properties={
+                        "max-page-delay": ceil(
+                            self._config.streaming.ogg.page.total_seconds() * 1000000000
+                        )
+                    },
+                )
 
     def _build_output_node(self, request: m.StreamRequest) -> GStreamerNode:
         return GStreamerNode(
             element="srtsink",
             properties={
+                "uri": f"srt://{gethostbyname(request.srt.host)}:{request.srt.port}",
+                "auto-reconnect": False,
                 "latency": ceil(request.srt.latency.total_seconds() * 1000),
                 "mode": "caller",
-                "uri": f"srt://{gethostbyname(request.srt.host)}:{request.srt.port}",
                 **(
                     {"passphrase": request.srt.password} if request.srt.password else {}
                 ),
@@ -153,11 +162,13 @@ class Runner:
                 self._build_output_node(request),
             ],
             options={
+                "eos-on-shutdown": True,
                 "no-position": True,
             },
             env={
                 "GST_DEBUG_NO_COLOR": "1",
             },
+            signals=ProcessSignals(terminate=signal.SIGINT),
         )
 
     async def _run_stream(self, metadata: ProcessBasedStreamMetadata) -> Stream:

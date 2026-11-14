@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, override
 
 import gi
 
@@ -36,32 +36,6 @@ class CustomWhipServerSrc(Gst.Bin):
         self._signaller = self._setup_signaller()
         self._webrtcbin = None
         self._agent = None
-
-    def _setup_whip(self) -> Gst.Element:
-        whip = Gst.ElementFactory.make_with_properties(
-            "whipserversrc",
-            ["audio-codecs", "video-codecs"],
-            [Gst.ValueArray(["OPUS"]), Gst.ValueArray([])],
-        )
-
-        self.add(whip)
-
-        templates = whip.get_pad_template_list()
-        for template in templates:
-            self.add_pad_template(template)
-
-        whip.connect("pad-added", self._on_pad_added)
-        whip.connect("pad-removed", self._on_pad_removed)
-        whip.connect("element-removed", self._on_element_removed)
-
-        return whip
-
-    def _setup_signaller(self) -> Gst.Element:
-        signaller = self._whip.get_property("signaller")
-
-        signaller.connect("webrtcbin-ready", self._on_webrtcbin_ready)
-
-        return signaller
 
     @GObject.Property(
         type=str,
@@ -147,34 +121,64 @@ class CustomWhipServerSrc(Gst.Bin):
     def codec(self, value: str) -> None:
         self._whip.set_property("audio-codecs", Gst.ValueArray([value]))
 
+    @override
+    def do_send_event(self, event: Gst.Event) -> bool:
+        match event.type:
+            case Gst.EventType.EOS:
+                results = [pad.push_event(event.copy()) for pad in self.srcpads]
+                return bool(results) and all(results)
+            case _:
+                return Gst.Bin.do_send_event(self, event)
+
+    def _setup_whip(self) -> Gst.Element:
+        whip = Gst.ElementFactory.make_with_properties(
+            "whipserversrc",
+            ["audio-codecs", "video-codecs"],
+            [Gst.ValueArray(["OPUS"]), Gst.ValueArray([])],
+        )
+
+        self.add(whip)
+
+        templates = whip.get_pad_template_list()
+        for template in templates:
+            self.add_pad_template(template)
+
+        whip.connect("pad-added", self._on_pad_added)
+        whip.connect("pad-removed", self._on_pad_removed)
+
+        return whip
+
+    def _setup_signaller(self) -> Gst.Element:
+        signaller = self._whip.get_property("signaller")
+
+        signaller.connect("webrtcbin-ready", self._on_webrtcbin_ready)
+
+        return signaller
+
     def _on_pad_added(
         self, element: Gst.Element, pad: Gst.Pad, *args: Any, **kwargs: Any
     ) -> None:
+        pad.add_probe(
+            Gst.PadProbeType.EVENT_DOWNSTREAM | Gst.PadProbeType.EVENT_FLUSH,
+            self._on_event,
+        )
         self.add_pad(Gst.GhostPad.new(pad.get_name(), pad))
+
+    def _on_event(self, pad: Gst.Pad, info: Gst.PadProbeInfo) -> Gst.PadProbeReturn:
+        event = info.get_event()
+        match event.type:
+            case Gst.EventType.FLUSH_START | Gst.EventType.FLUSH_STOP:
+                return Gst.PadProbeReturn.DROP
+            case _:
+                return Gst.PadProbeReturn.OK
 
     def _on_pad_removed(
         self, element: Gst.Element, pad: Gst.Pad, *args: Any, **kwargs: Any
     ) -> None:
-        self.remove_pad(self.get_static_pad(pad.get_name()))
-
-    def _on_element_removed(self, element: Gst.Bin, removed: Gst.Element) -> None:
-        if not isinstance(removed, Gst.Bin):
-            return
-
-        pipeline = self._get_pipeline()
-        if pipeline is not None:
-            pipeline.post_message(Gst.Message.new_eos(pipeline))
-
-    def _get_pipeline(self) -> Gst.Pipeline | None:
-        parent = self.get_parent()
-
-        while parent is not None:
-            if isinstance(parent, Gst.Pipeline):
-                return parent
-
-            parent = parent.get_parent()
-
-        return None
+        ghost = self.get_static_pad(pad.get_name())
+        if ghost is not None:
+            ghost.push_event(Gst.Event.new_eos())
+            self.remove_pad(ghost)
 
     def _on_webrtcbin_ready(
         self,
@@ -186,6 +190,9 @@ class CustomWhipServerSrc(Gst.Bin):
     ) -> None:
         self._webrtcbin = webrtcbin
         self._agent = self._webrtcbin.get_property("ice-agent")
+
+        # Use only UDP for ICE candidates
+        self._agent.set_property("ice-tcp", False)  # noqa: FBT003
 
         if self._min is not None:
             self._agent.set_property("min-rtp-port", self._min)

@@ -33,6 +33,13 @@ class ServerConfig(BaseModel):
     """Trusted IP addresses."""
 
 
+class OGGConfig(BaseModel):
+    """Configuration for the Ogg muxer."""
+
+    page: Timedelta = Field(default=timedelta(microseconds=1), gt=timedelta())
+    """Preferred duration of Ogg pages."""
+
+
 class STUNConfig(BaseModel):
     """Configuration for the STUN server."""
 
@@ -46,11 +53,14 @@ class STUNConfig(BaseModel):
 class StreamingConfig(BaseModel):
     """Configuration for the streaming service."""
 
+    ogg: OGGConfig = OGGConfig()
+    """Configuration for the Ogg muxer."""
+
     stun: STUNConfig = STUNConfig()
     """Configuration for the STUN server."""
 
     timeout: Timedelta = Field(default=timedelta(minutes=1), ge=timedelta())
-    """Time after which a stream will be stopped if no connections are made."""
+    """Time without incoming audio before stopping."""
 
 
 class Config(BaseConfig):

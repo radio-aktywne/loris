@@ -25,6 +25,9 @@ You can configure the service at runtime using various environment variables:
 - `LORIS__SERVER__TRUSTED` -
   trusted IP addresses
   (default: `*`)
+- `LORIS__STREAMING__OGG__PAGE` -
+  preferred duration of Ogg pages
+  (default: `PT0.000001S`)
 - `LORIS__STREAMING__STUN__HOST` -
   host of the STUN server
   (default: `stun.l.google.com`)
@@ -32,5 +35,5 @@ You can configure the service at runtime using various environment variables:
   port of the STUN server
   (default: `19302`)
 - `LORIS__STREAMING__TIMEOUT` -
-  time after which a stream will be stopped if no connections are made
+  time without incoming audio before stopping
   (default: `PT1M`)
