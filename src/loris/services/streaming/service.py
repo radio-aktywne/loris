@@ -18,6 +18,7 @@ class StreamingService:
         self._store = store
         self._lock = lock
         self._task: asyncio.Task | None = None
+        self._transition = asyncio.Lock()
 
     def _get_default_stun(self) -> m.STUN:
         return m.STUN(
@@ -47,7 +48,7 @@ class StreamingService:
             else:
                 break
 
-    async def _free(self) -> None:
+    async def _release(self) -> None:
         async with self._lock:
             await self._store.set(False)
 
@@ -60,49 +61,68 @@ class StreamingService:
                 await asyncio.wait_for(stream.wait(), timeout=5)
                 return
 
+        raise e.StreamStopError
+
     async def _watch_stream(self, stream: Stream) -> None:
         try:
             await stream.wait()
+            await self._release()
         except asyncio.CancelledError:
             await self._stop_stream(stream)
+            await self._release()
+
+    async def _stop(self) -> None:
+        if self._task is None:
+            return
+
+        self._task.cancel()
+
+        try:
+            await asyncio.shield(self._task)
+        except asyncio.CancelledError:
+            while not self._task.done():
+                with suppress(asyncio.CancelledError):
+                    await asyncio.shield(self._task)
+
+            await self._task
             raise
-        finally:
-            await self._free()
+
+        self._task = None
 
     async def _run(self, request: m.StreamRequest) -> None:
         runner = Runner(config=self._config, stun=self._get_default_stun())
         stream = await runner.run(request)
 
+        self._task = asyncio.create_task(self._watch_stream(stream), eager_start=True)
+
         try:
             await asyncio.wait_for(self._wait_for_stream_start(), 5)
         except BaseException:
-            await self._stop_stream(stream)
+            await self._stop()
             raise
-
-        def on_done(task: asyncio.Task) -> None:
-            if self._task is task:
-                self._task = None
-
-        self._task = asyncio.create_task(self._watch_stream(stream), eager_start=True)
-        self._task.add_done_callback(on_done)
 
     async def stream(self, request: m.StreamRequest) -> m.StreamResponse:
         """Start a stream."""
-        await self._reserve()
+        async with self._transition:
+            if request.force:
+                await self._stop()
 
-        try:
-            await self._run(request)
-        except BaseException:
-            await self._free()
-            raise
+            await self._reserve()
+
+            try:
+                await self._run(request)
+            except e.StreamStopError:
+                raise
+            except BaseException:
+                await self._release()
+                raise
 
         return m.StreamResponse(stun=request.webrtc.stun or self._get_default_stun())
 
     async def close(self) -> None:
         """Close gracefully."""
-        if self._task is None:
-            return
+        async with self._transition:
+            with suppress(asyncio.CancelledError, RuntimeError):
+                await self._stop()
 
-        self._task.cancel()
-        with suppress(asyncio.CancelledError):
-            await self._task
+            self._task = None

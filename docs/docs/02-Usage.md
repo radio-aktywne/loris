@@ -6,8 +6,9 @@ title: Usage
 ## Requesting a stream
 
 You can request a stream by sending a `POST` request to the `/stream` endpoint.
-The request body should contain the information
-about the target to send the stream to.
+The request body should contain information
+about the target to send the stream to
+and whether to replace an active stream.
 See the API documentation for more details.
 
 For example, you can use `curl` to do that:

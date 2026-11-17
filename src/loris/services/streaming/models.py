@@ -69,6 +69,9 @@ class StreamRequest:
     codec: Codec
     """Audio codec."""
 
+    force: bool
+    """Whether to replace an existing stream."""
+
     format: Format
     """Audio format."""
 

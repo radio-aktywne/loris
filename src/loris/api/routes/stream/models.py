@@ -82,6 +82,9 @@ class StreamInput(SerializableModel):
     codec: sm.Codec = sm.Codec.OPUS
     """Audio codec."""
 
+    force: bool = False
+    """Whether to replace an existing stream."""
+
     format: sm.Format = sm.Format.OGG
     """Audio format."""
 
@@ -103,6 +106,7 @@ class StreamInput(SerializableModel):
             bitrate=self.bitrate,
             channels=self.channels,
             codec=self.codec,
+            force=self.force,
             format=self.format,
             metadata=self.metadata,
             samplerate=self.samplerate,
